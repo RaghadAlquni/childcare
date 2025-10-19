@@ -1,0 +1,96 @@
+.header {
+  display: flex;
+  width: 100%;
+  padding: 18px 32px;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.logo {
+  width: 110px;
+  height: 110px;
+  flex-shrink: 0;
+  aspect-ratio: 1/1;
+}
+
+
+.Navbar {
+  display: flex;
+  align-items: center;
+  gap: 130px;
+  padding: 0%;
+  margin: 0;
+  list-style: none;
+}
+
+.NavbarItemActive {
+  color: var(--Primary-Color, #F9B236);
+  text-align: right;
+  /* 22/Bold */
+  /* font-family: 'Inter'; */
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+}
+
+
+.NavbarItem {
+  color: var(--Text-Color, #292929);
+  text-align: right;
+  /* 22/Bold */
+  /* font-family: Inter; */
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+}
+
+.NavbarButtons {
+  display: flex;
+  align-items: center;
+  gap: 26px;
+}
+
+.NavButton {
+  display: flex;
+  height: 48px;
+  padding: 10px 20px;
+  justify-content: center;
+  align-items: center;
+  border-radius: 99px;
+  border: 1px solid var(--Primary-Color, #F9B236);
+  gap: 10px;
+  color:  #F9B236;
+  background-color: #FFFF;
+    text-align: right;
+    /* 22/Bold */
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    font-family: "Cairo", sans-serif;
+
+}
+
+.ActiveNavButton {
+  display: flex;
+  height: 48px;
+  padding: 10px 30px;
+  justify-content: center;
+  align-items: center;
+  border-radius: 99px;
+  border: 1px solid #F9B236;
+  gap: 10px;
+  color:  #fff;
+  background-color: #F9B236;
+    text-align: right;
+    /* 22/Bold */
+    font-size: 16px;
+    font-family: "Cairo", sans-serif;
+    /* font-style: normal; */
+    font-weight: 700;
+    /* line-height: normal; */
+}
