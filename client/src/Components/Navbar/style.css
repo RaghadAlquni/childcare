@@ -1,96 +1,175 @@
 .header {
   display: flex;
   width: 100%;
-  padding: 18px 32px;
+  padding: 18px 32px 0 32px;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   box-sizing: border-box;
   overflow: hidden;
+  position: relative;
+  z-index: 1000;
+  gap: 8%;
 }
 
 .logo {
-  width: 110px;
-  height: 110px;
+  width: 90px;
+  height: 90px;
   flex-shrink: 0;
-  aspect-ratio: 1/1;
+  /* margin-left: auto; */
+  /* aspect-ratio: 1/1; */
 }
 
 
 .Navbar {
   display: flex;
   align-items: center;
-  gap: 130px;
-  padding: 0%;
+  gap: 160px;
+  padding: 0;
   margin: 0;
   list-style: none;
+  transition: all 0.3s ease-in-out;
+}
+
+.NavbarItemActive,
+.NavbarItem {
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
 }
 
 .NavbarItemActive {
-  color: var(--Primary-Color, #F9B236);
-  text-align: right;
-  /* 22/Bold */
-  /* font-family: 'Inter'; */
-  font-size: 18px;
-  font-style: normal;
-  font-weight: 700;
-  line-height: normal;
+  color: #F9B236;
+ 
 }
 
 
 .NavbarItem {
-  color: var(--Text-Color, #292929);
-  text-align: right;
-  /* 22/Bold */
-  /* font-family: Inter; */
-  font-size: 18px;
-  font-style: normal;
-  font-weight: 700;
-  line-height: normal;
+  color:#292929;
+ 
 }
 
 .NavbarButtons {
   display: flex;
   align-items: center;
-  gap: 26px;
+  gap: 16px;
 }
 
-.NavButton {
-  display: flex;
-  height: 48px;
-  padding: 10px 20px;
-  justify-content: center;
-  align-items: center;
+.NavButton,
+.ActiveNavButton {
   border-radius: 99px;
-  border: 1px solid var(--Primary-Color, #F9B236);
-  gap: 10px;
+  padding: 5px 20px;
+  height: 44px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: "Cairo", sans-serif;
+}
+
+
+.NavButton {
+  border: 1px solid #F9B236;
   color:  #F9B236;
   background-color: #FFFF;
-    text-align: right;
-    /* 22/Bold */
-    font-size: 16px;
-    font-style: normal;
-    font-weight: 700;
-    line-height: normal;
-    font-family: "Cairo", sans-serif;
+  font-family: "Cairo", sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center; 
+  gap: 10px;
+  font-size: 16px;
+  font-style: normal; 
 
 }
 
 .ActiveNavButton {
-  display: flex;
-  height: 48px;
-  padding: 10px 30px;
-  justify-content: center;
-  align-items: center;
-  border-radius: 99px;
+  background:  #F9B236;
+  color: white;
   border: 1px solid #F9B236;
-  gap: 10px;
-  color:  #fff;
-  background-color: #F9B236;
-    text-align: right;
-    /* 22/Bold */
-    font-size: 16px;
-    font-family: "Cairo", sans-serif;
-    /* font-style: normal; */
-    font-weight: 700;
-    /* line-height: normal; */
 }
+
+
+/* Hamburger Menu */
+.menu-icon {
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 30px;
+  height: 25px;
+  cursor: pointer;
+  position: absolute;
+  z-index: 1100;
+  top: 50%;
+  left: 32px;
+  transform: translateY(-50%);
+
+}
+
+.menu-icon div {
+  background-color: #292929;
+  height: 4px;
+  border-radius: 2px;
+  transition: 0.3s;
+}
+
+.menu-icon.open div:nth-child(1) {
+  transform: rotate(45deg) translateY(10px);
+}
+.menu-icon.open div:nth-child(2) {
+  opacity: 0;
+}
+.menu-icon.open div:nth-child(3) {
+  transform: rotate(-45deg) translateY(-10px);
+}
+
+/* Mobile menu */
+@media (max-width: 900px) , (max-width: 1024px){
+
+  .logo {
+  width: 130px;
+  height: 130px;
+  flex-shrink: 0;
+  /* margin-left: auto; */
+  /* aspect-ratio: 1/1; */
+}
+
+  .header {
+    width: 100%;
+  }
+  .Navbar {
+    position: fixed;
+    top: 0;
+    right: 0;
+    background: white;
+    flex-direction: column;
+    width: 100%;
+    gap: 20px;
+    padding: 20px 0;
+    transform: translateY(-200%);
+    transition: all 0.3s ease-in-out;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 999;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .Navbar.active {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: all;
+    /* box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); */
+  }
+
+  .menu-icon {
+    display: flex;  
+  }
+
+
+  .desktop {
+    display: none;
+  }
+
+  .NavbarButtons.mobile {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+
