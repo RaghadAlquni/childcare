@@ -9,6 +9,7 @@
   position: relative;
   z-index: 1000;
   gap: 8%;
+  background-color: white;
 }
 
 .logo {

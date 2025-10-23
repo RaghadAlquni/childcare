@@ -1,0 +1,151 @@
+.whoUsContainer {
+  position: relative;
+  width: 100vw;
+  height: auto;
+  overflow: hidden;
+  text-align: center;
+  direction: rtl;
+}
+
+/* الخلفية */
+.whoUsBg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  z-index: 0;
+}
+
+/* المحتوى */
+.whoUsContent {
+  position: relative;
+  z-index: 1;
+  padding: 60px 40px;
+  top: 50px;
+}
+
+.whoUsTitle {
+  font-size: 28px;
+  font-weight: bold;
+  color: #292929;
+  margin-bottom: 10px;
+}
+
+.highlight {
+  color: #F9B236;
+}
+
+.whoUsDescription {
+  font-size: 18px;
+  color: #292929;
+}
+
+/* الشبكة */
+.whoUsGrid {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 30px 150px ;
+  flex-wrap: wrap;
+}
+
+.whoUsBox1 {
+  flex: 1;
+  min-width: 250px;
+  height: 450px;
+  outline: 1px dashed #f7b500;
+  outline-offset: 4px;
+  padding: 20px;
+  border-radius: 99px;
+  background-color: rgba(249, 178, 54, 0.1);
+  backdrop-filter: blur(4px);
+  
+}
+
+.whoUsBox2 {
+    flex: 1;
+  min-width: 250px;
+  height: 450px;
+  outline: 1px dashed #E84191;
+  outline-offset: 4px;
+  padding: 20px;
+  border-radius: 99px;
+  background-color: rgba(232, 65, 145, 0.1);
+  backdrop-filter: blur(4px);
+}
+
+.whoUsBox3 {
+  flex: 1;
+  min-width: 250px;
+  height: 450px;
+  outline: 1px dashed #17B3DC;
+  outline-offset: 4px;
+  padding: 20px;
+  border-radius: 99px;
+  background-color: rgba(23, 179, 220, 0.1);
+  backdrop-filter: blur(4px);
+}
+
+/* كرت الأهداف */
+.whoUsGoals {
+  outline: 1px dashed #f7b500;
+  outline-offset: 4px;
+  padding: 20px;
+  border-radius: 99px;
+  background-color: rgba(249, 178, 54, 0.1);
+  text-align: right;
+  width: 100%;
+  max-width: 79%;
+  box-sizing: border-box;
+  margin: 0 auto 90px auto;
+}
+
+/* الأيقونات */
+.icon {
+  font-size: 28px;
+  color: #1e90ff;
+  margin-bottom: 10px;
+  width: 100px;
+  height: 100px;
+}
+
+.secondCenter{
+  position: relative;
+  width: 100vw;
+  height: auto;
+  overflow: hidden;
+  text-align: center;
+  direction: rtl;
+  z-index: 1;
+  padding: 50px 40px;
+}
+
+
+
+/* للجوال */
+@media (max-width: 900px) {
+  .whoUsGrid,
+  .whoUsGoals {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    gap: 16px;
+    padding-bottom: 12px;
+  }
+
+  .whoUsBox,
+  .whoUsGoals {
+    flex: 0 0 80%;
+    scroll-snap-align: start;
+    min-width: 260px;
+  }
+
+  .whoUsGoals ul {
+    list-style: none;
+    padding: 0;
+  }
+}
