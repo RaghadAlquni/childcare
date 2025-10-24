@@ -1,0 +1,16 @@
+# Ignore the server folder completely (for now)
+server/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# IDE/editor
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# Environment files
+.env

@@ -1,6 +1,15 @@
 const express = require("express")
 
-const {addChildren, getOneChild, getAllChildren, updateChild , deleteChild, confirmChild, inActiveChild, markAllChildrenInactive} = require("../controllers/children.js")
+const {addChildren,
+  getOneChild,
+  getAllChildren,
+  updateChild,
+  deleteChild,
+  confirmChild,
+  inActiveChild,
+  markAllChildrenInactive} = require("../controller/children.js")
+
+  
 const childRouter = express.Router()
 
 childRouter.post("/childRegister", addChildren)

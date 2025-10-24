@@ -21,6 +21,11 @@ app.get('/', (req, res) => {
 const childRoutes = require("./routers/routes/children.js");
 app.use(childRoutes);
 
+const authRoutes = require("./routers/routes/auth.js")
+app.use(authRoutes)
+
+const userRouter = require("./routers/routes/user.js")
+app.use(userRouter)
 
 const PORT = process.env.PORT || 5000 ;
 app.listen(PORT, () => {
