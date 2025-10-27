@@ -46,6 +46,13 @@ const userSchema = new mongoose.Schema({
     used: { type: Boolean, default: false }
   },
 
+  managedAssistants: [
+  {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User"
+  }
+],
+
   assistantClasses: [
   { type: mongoose.Schema.Types.ObjectId, ref: "Classroom" }
 ],

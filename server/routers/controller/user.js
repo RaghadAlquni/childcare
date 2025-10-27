@@ -41,18 +41,18 @@ const sendUserEmail = async (email, tempPassword, fullName) => {
 };
 
 
-// ➕ إضافة مستخدم جديد (Admin / Director / Assistant Director)
+// ➕ إضافة مستخدم جديد (Admin / Director / Assistant Director / Teacher / Assistant Teacher / Parent)
 const addUser = async (req, res) => {
   try {
-    const { fullName, email, idNumber, role, branch, shift, phone, gender } = req.body;
+    const { fullName, email, idNumber, role, branch, shift } = req.body;
     const requestingUser = req.user;
 
-    // تحقق من الحقول الأساسية
+    // ✅ تحقق من الحقول الأساسية
     if (!fullName || !email || !idNumber || !role) {
       return res.status(400).json({ message: "❌ الحقول الأساسية مطلوبة" });
     }
 
-    // الأدوار المسموحة
+    // ✅ تحقق من الدور
     const validRoles = [
       "admin",
       "director",
@@ -65,15 +65,13 @@ const addUser = async (req, res) => {
       return res.status(400).json({ message: "❌ دور المستخدم غير صالح" });
     }
 
-    // تحقق من عدم تكرار الهوية أو الإيميل
-    const existingUser = await User.findOne({
-      $or: [{ idNumber }, { email }],
-    });
+    // ✅ تحقق من التكرار
+    const existingUser = await User.findOne({ $or: [{ idNumber }, { email }] });
     if (existingUser) {
       return res.status(400).json({ message: "❌ رقم الهوية أو البريد الإلكتروني مستخدم مسبقًا" });
     }
 
-    // السماح فقط لـ admin / director / assistant_director بالإضافة
+    // ✅ السماح فقط للأدوار المصرح لها بالإضافة
     if (!["admin", "director", "assistant_director"].includes(requestingUser.role)) {
       return res.status(403).json({ message: "🚫 غير مصرح لك بإضافة مستخدمين" });
     }
@@ -81,9 +79,9 @@ const addUser = async (req, res) => {
     let assignedBranch = null;
     let assignedShift = null;
 
-    // الأدمن يحدد الفرع والشفت يدويًا
+    // 🔹 الأدمن يحددها يدويًا
     if (requestingUser.role === "admin") {
-      if (role !== "admin") {
+      if (role !== "admin" && role !== "parent") {
         if (!branch || !shift) {
           return res.status(400).json({ message: "❌ يجب تحديد الفرع والشفت" });
         }
@@ -92,44 +90,127 @@ const addUser = async (req, res) => {
       }
     }
 
-    // المدير والمدير المساعد يتم التوريث منهم
-    if (requestingUser.role === "director" || requestingUser.role === "assistant_director") {
+    // 🔹 المدير أو المساعد يورث فرعه وشفته
+    if (["director", "assistant_director"].includes(requestingUser.role)) {
       assignedBranch = requestingUser.branch;
       assignedShift = requestingUser.shift;
     }
 
-    // توليد كلمة مرور مؤقتة
+    // ✅ توليد كلمة مرور مؤقتة
     const tempPassword = Math.random().toString(36).slice(-8);
     const hashedPassword = await bcrypt.hash(tempPassword, 10);
 
+    // ✅ إنشاء المستخدم الجديد
     const newUser = new User({
       fullName,
       email,
       idNumber,
-      phone,
-      gender,
       password: hashedPassword,
       role,
       branch: assignedBranch,
       shift: assignedShift,
-      directorId: requestingUser.role === "director" ? requestingUser._id : null,
-      assistantDirectorId: requestingUser.role === "assistant_director" ? requestingUser._id : null,
     });
 
     await newUser.save();
 
+    // =====================================================
+    // 🔹 الربط التلقائي بناءً على الفرع والشفت
+    // =====================================================
+
+    // نبحث عن المدير في نفس الفرع والشفت
+    const director = await User.findOne({
+      role: "director",
+      branch: assignedBranch,
+      shift: assignedShift,
+    });
+
+    // نبحث عن المدير المساعد في نفس الفرع والشفت (قد يكون موجود)
+    const assistantDirector = await User.findOne({
+      role: "assistant_director",
+      branch: assignedBranch,
+      shift: assignedShift,
+    });
+
+    // ✅ لو أضفنا مدير مساعد:
+    // يربط بالمدير مباشرة ويحدث علاقة managedAssistants
+    if (role === "assistant_director" && director) {
+      newUser.directorId = director._id;
+      await newUser.save();
+
+      if (!director.managedAssistants) director.managedAssistants = [];
+      if (!director.managedAssistants.includes(newUser._id)) {
+        director.managedAssistants.push(newUser._id);
+        await director.save();
+      }
+    }
+
+    // ✅ لو أضفنا معلم أو مساعد معلم:
+    // يربط بالمدير والمدير المساعد (إن وجدوا)
+    if (["teacher", "assistant_teacher"].includes(role)) {
+      if (director) {
+        newUser.directorId = director._id;
+        await newUser.save();
+
+        if (!director.managedTeachers) director.managedTeachers = [];
+        if (!director.managedTeachers.includes(newUser._id)) {
+          director.managedTeachers.push(newUser._id);
+          await director.save();
+        }
+      }
+
+      if (assistantDirector) {
+        newUser.assistantDirectorId = assistantDirector._id;
+        await newUser.save();
+      }
+    }
+
+    // =====================================================
+    // 🔹 تحديث الفرع
+    // =====================================================
+    if (assignedBranch && role !== "admin" && role !== "parent") {
+      const branchDoc = await Branch.findById(assignedBranch);
+      if (branchDoc) {
+        if (!branchDoc.directors) branchDoc.directors = [];
+        if (!branchDoc.assistant_directors) branchDoc.assistant_directors = [];
+        if (!branchDoc.teachers) branchDoc.teachers = [];
+        if (!branchDoc.assistant_teachers) branchDoc.assistant_teachers = [];
+
+        switch (role) {
+          case "director":
+            branchDoc.directors.push({ user: newUser._id, shift: assignedShift });
+            break;
+          case "assistant_director":
+            branchDoc.assistant_directors.push(newUser._id);
+            break;
+          case "teacher":
+            branchDoc.teachers.push(newUser._id);
+            break;
+          case "assistant_teacher":
+            branchDoc.assistant_teachers.push(newUser._id);
+            break;
+        }
+
+        await branchDoc.save();
+      }
+    }
+
+    // =====================================================
+    // 🔹 إرسال الإيميل
+    // =====================================================
     await sendUserEmail(email, tempPassword, fullName);
 
     res.status(201).json({
-      message: `${role} تمت إضافته بنجاح ✅`,
+      message: `✅ تمت إضافة ${role} وربطه تلقائيًا بالمدير والمساعد المناسبين`,
       user: newUser,
     });
   } catch (error) {
     console.error("❌ Error adding user:", error);
-    res.status(500).json({ message: "❌ حدث خطأ أثناء إضافة المستخدم", error: error.message });
+    res.status(500).json({
+      message: "❌ حدث خطأ أثناء إضافة المستخدم",
+      error: error.message,
+    });
   }
 };
-
 
 //  جلب جميع المعلمين الرئيسيين
 const getTeachers = async (req, res) => {
@@ -273,6 +354,62 @@ const getAssistantDirector = async (req, res) => {
   }
 };
 
+const getDirectorDetails = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // نجيب المدير ومعاه العلاقات كاملة
+    const director = await User.findById(id)
+      .populate({
+        path: "managedAssistants",
+        select: "fullName email idNumber role shift branch",
+        populate: {
+          path: "branch",
+          select: "branchName city district"
+        }
+      })
+      .populate({
+        path: "managedTeachers",
+        select: "fullName email idNumber role shift branch",
+        populate: {
+          path: "branch",
+          select: "branchName city district"
+        }
+      })
+      .populate({
+        path: "branch",
+        select: "branchName city district"
+      });
+
+    if (!director) {
+      return res.status(404).json({ message: "❌ المدير غير موجود" });
+    }
+
+    res.status(200).json({
+      message: "✅ تم جلب بيانات المدير بنجاح",
+      data: {
+        _id: director._id,
+        fullName: director.fullName,
+        email: director.email,
+        idNumber: director.idNumber,
+        role: director.role,
+        branch: director.branch,
+        shift: director.shift,
+        assistantsCount: director.managedAssistants.length,
+        teachersCount: director.managedTeachers.length,
+        managedAssistants: director.managedAssistants,
+        managedTeachers: director.managedTeachers
+      }
+    });
+  } catch (error) {
+    console.error("❌ Error fetching director details:", error);
+    res.status(500).json({
+      message: "❌ حدث خطأ أثناء جلب بيانات المدير",
+      error: error.message
+    });
+  }
+};
+
 
 module.exports = {
   addUser,
@@ -284,4 +421,5 @@ module.exports = {
   getDirector,
   getAllAssistantDirectors,
   getAssistantDirector,
+  getDirectorDetails,
 };

@@ -1,3 +1,5 @@
+// for run : node scripts/seedAdmin.js
+
 // scripts/seedAdmin.js
 require("dotenv").config();
 const mongoose = require("mongoose");
@@ -12,7 +14,7 @@ const ADMIN_PASSWORD_FROM_ENV = process.env.SEED_ADMIN_PASSWORD || null; // لو
 const SALT_ROUNDS = parseInt(process.env.SALT_ROUNDS || "10", 10);
 
 if (!MONGO_DB) {
-  console.error("MONGO_URI is not set in .env — aborting seed.");
+  console.error("MONGO_DB is not set in .env — aborting seed.");
   process.exit(1);
 }
 
@@ -47,7 +49,7 @@ async function createAdminIfNotExists() {
 
     const newAdmin = new User({
       fullName: ADMIN_FULLNAME,
-      idNumber: ADMIN_ID_NUMBER,
+      idNumber: Number(ADMIN_ID_NUMBER),
       email: ADMIN_EMAIL,
       password: hashed,
       role: "admin",

@@ -34,6 +34,16 @@ const branchSchema = new mongoose.Schema({
       ],
     },
   ],
+directors: [
+  {
+    user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: false },
+    shift: { type: String, enum: ["صباح", "مساء"], required: false }
+  }
+],
+  assistant_directors: [{ type: mongoose.Schema.Types.ObjectId, ref: "User", default: null}],
+  teachers: [{ type: mongoose.Schema.Types.ObjectId, ref: "User", default: null}],
+  assistant_teachers: [{ type: mongoose.Schema.Types.ObjectId, ref: "User", default: null}],
+
 }, 
 { timestamps: true });
 

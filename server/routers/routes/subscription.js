@@ -4,7 +4,7 @@ const subscriptionRouter = express.Router();
 const authentication = require("../middleware/authentication.js");
 const authorize = require("../middleware/authorization.js");
 
-const { addSubscription, updateSubscription, deleteSubscription, getAllSubscriptions, getOneSubscription} = require("../controller/subscription.js");
+const { addSubscription, updateSubscription, deleteSubscription, getAllSubscriptions, getOneSubscription, getActiveSubscriptionsByBranch, getSubscriptionsByBranchAndShift} = require("../controller/subscription.js");
 
 // ✅ إضافة اشتراك
 subscriptionRouter.post("/subscription/add", authentication, authorize(["admin", "director", "assistant_director"]), addSubscription);
@@ -20,5 +20,9 @@ subscriptionRouter.get("/subscription/all", authentication, authorize(["admin", 
 
 // ✅ عرض اشتراك واحد
 subscriptionRouter.get("/subscription/:id", authentication, authorize(["admin", "director", "assistant_director", "parent"]), getOneSubscription);
+// عرض اشتراك واحد على اساس البرانش والشفت
+subscriptionRouter.get("/SubscriptionsByBranchAndShift", getActiveSubscriptionsByBranch);
+// عرض اشتراك واحد على اساس البرانش
+subscriptionRouter.get("/SubscriptionsByBranch", getSubscriptionsByBranchAndShift);
 
 module.exports = subscriptionRouter;

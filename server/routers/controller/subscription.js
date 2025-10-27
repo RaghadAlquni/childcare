@@ -172,10 +172,69 @@ const getOneSubscription = async (req, res) => {
   }
 };
 
+
+// جلب الاشتراكات حسب الفرع والشفت
+const getSubscriptionsByBranchAndShift = async (req, res) => {
+  try {
+    const { branchId, shift } = req.query;
+
+    // تحقق من وجود المعطيات
+    if (!branchId || !shift) {
+      return res.status(400).json({ message: "يجب تمرير branchId و shift في الاستعلام" });
+    }
+
+    const subscriptions = await Subscription.find({
+      branch: branchId,
+      shift: shift,
+      isActive: true
+    }).populate("branch", "name city district locationLink") // عرض بيانات الفرع والشفت هذا أيضًا
+
+
+    res.status(200).json(subscriptions);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "حدث خطأ أثناء جلب الاشتراكات" });
+  }
+};
+
+// ✅ جلب كل الاشتراكات المفعلة الخاصة بفرع معين (مع جميع بياناتها)
+const getActiveSubscriptionsByBranch = async (req, res) => {
+  try {
+    const { branchId } = req.params;
+
+    if (!branchId) {
+      return res.status(400).json({ message: "يجب تمرير معرف الفرع (branchId) في الرابط" });
+    }
+
+    // جلب الاشتراكات المفعلة لهذا الفرع
+    const activeSubscriptions = await Subscription.find({
+      branch: branchId,
+      isActive: true
+    })
+      .populate("branch", "name city district locationLink") // عرض بيانات الفرع أيضًا
+      .sort({ createdAt: -1 }); // الأحدث أولًا (اختياري)
+
+    if (!activeSubscriptions.length) {
+      return res.status(404).json({ message: "لا توجد اشتراكات مفعّلة لهذا الفرع" });
+    }
+
+    res.status(200).json({
+      branch: activeSubscriptions[0].branch,
+      total: activeSubscriptions.length,
+      subscriptions: activeSubscriptions
+    });
+  } catch (error) {
+    console.error("❌ خطأ أثناء جلب الاشتراكات:", error);
+    res.status(500).json({ message: "حدث خطأ أثناء جلب الاشتراكات" });
+  }
+};
+
 module.exports = {
   addSubscription,
   updateSubscription,
   deleteSubscription,
   getAllSubscriptions,
   getOneSubscription,
+  getActiveSubscriptionsByBranch,
+  getSubscriptionsByBranchAndShift,
 };

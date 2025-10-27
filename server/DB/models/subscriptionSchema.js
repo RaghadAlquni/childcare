@@ -1,32 +1,23 @@
 const mongoose = require("mongoose");
 
 const subscriptionSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-    enum: ["شهري", "أسبوعي", "ترم", "صيفي", "سنوي"], 
-  },
-  price: { type: Number, required: true },
-  ageRange: {
-    from: { type: Number, required: true },
-    to: { type: Number, required: true },
-  },
-  durationType: {
-    type: String,
-    enum: ["شهر", "أسبوع", "ترم", "سنة"],
-    required: true,
-  },
-  description: { type: String, default: "" },
+  name: { type: String, required: true }, // اسم الباقة
+  price: { type: Number, required: true }, // السعر
+  description: { type: String },
+  duration: { type: String }, // مثلاً: "شهري" أو "فصلي"
+
   branch: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Branch",
-    default: null,
+    required: true
   },
-  createdBy: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-    required: true,
+  shift: {
+    type: String,
+    enum: ["صباح", "مساء"],
+    required: true
   },
+
+  isActive: { type: Boolean, default: true } // حالة التفعيل
 }, { timestamps: true });
 
 module.exports = mongoose.model("Subscription", subscriptionSchema);

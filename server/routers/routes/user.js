@@ -9,7 +9,8 @@ const { addUser,
   getAllDirectors,
   getDirector,
   getAllAssistantDirectors,
-  getAssistantDirector,} = require("../controller/user")
+  getAssistantDirector,
+  getDirectorDetails} = require("../controller/user")
 const authenticate = require("../middleware/authentication.js");
 const authorize = require("../middleware/authorization.js");
 
@@ -33,5 +34,6 @@ userRouter.get("/teachers", authenticate, authorize(["admin", "director", "assis
 userRouter.get("/assistantTeachers", authenticate, authorize(["admin", "director", "assistant_director"]), getAssistantTeachers);
 userRouter.get("/teacher/:id", authenticate, authorize(["admin", "director", "assistant_director"]), getTeacher);
 userRouter.get("/assistantTeacher/:id", authenticate, authorize(["admin", "director", "assistant_director"]), getAssistantTeacher);
+userRouter.get("/directorDetails/:id", authenticate, authorize(["admin", "director"]), getDirectorDetails);
 
 module.exports = userRouter;

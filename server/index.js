@@ -7,6 +7,8 @@ const axios = require("axios");
 
 
 const app = express();
+// احنا نحتاج نسوي ميدل وير يحول لنا الجيسون الى كائن جافاسكربت
+app.use(express.json())
 
 const token = process.env.WHATSAPP_TOKEN;
 const phoneNumberId = process.env.WHATSAPP_PHONE_ID;
