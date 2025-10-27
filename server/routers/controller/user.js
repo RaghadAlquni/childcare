@@ -1,377 +1,287 @@
 const User = require("../../DB/models/userSchema");
 const bcrypt = require("bcrypt");
-require('dotenv').config();
+require("dotenv").config();
 const nodemailer = require("nodemailer");
+const Child = require("../../DB/models/childrenSchema.js");
+const Branch = require("../../DB/models/branchSchema.js");
+const mongoose = require("mongoose");
 
-const Child = require("../../DB/models/childrenSchema.js")
 
-
-// دالة لإرسال البريد للمستخدم الجديد
+// 📧 إرسال الإيميل للمستخدم الجديد
 const sendUserEmail = async (email, tempPassword, fullName) => {
-  const transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: process.env.SMTP_PORT,
-    secure: false, // true إذا كان 465
-    auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS,
-    }
-  });
+  try {
+    const transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST,
+      port: process.env.SMTP_PORT,
+      secure: false,
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
+      },
+    });
 
-  const mailOptions = {
-    from: process.env.SMTP_FROM,
-    to: email,
-    subject: "Your new account has been created",
-    text: `Hello ${fullName},\n\nYour account has been created.\nYour temporary password is: ${tempPassword}\nPlease log in and change your password immediately.\n\nThank you!`
-  };
+    const mailOptions = {
+      from: `"Childcare System" <${process.env.SMTP_USER}>`,
+      to: email,
+      subject: "بيانات تسجيل الدخول الخاصة بك",
+      html: `
+        <div style="direction: rtl; text-align: right; font-family: sans-serif;">
+          <h3>مرحبًا ${fullName} 👋</h3>
+          <p>تم إنشاء حسابك في نظام الحضانة.</p>
+          <p><strong>كلمة المرور المؤقتة:</strong> ${tempPassword}</p>
+          <p>الرجاء تسجيل الدخول وتغيير كلمة المرور في أقرب وقت.</p>
+        </div>
+      `,
+    };
 
-  await transporter.sendMail(mailOptions);
+    await transporter.sendMail(mailOptions);
+  } catch (error) {
+    console.error("❌ فشل إرسال الإيميل:", error);
+  }
 };
 
 
-// إضافة Admin أو Director (Admin فقط)
-const addUserByAdmin = async (req, res) => {
+// ➕ إضافة مستخدم جديد (Admin / Director / Assistant Director)
+const addUser = async (req, res) => {
   try {
-    const { fullName, email, idNumber, role, shift } = req.body;
+    const { fullName, email, idNumber, role, branch, shift, phone, gender } = req.body;
     const requestingUser = req.user;
 
-    // التحقق من الحقول المطلوبة
+    // تحقق من الحقول الأساسية
     if (!fullName || !email || !idNumber || !role) {
-      return res.status(400).json({ message: "Missing required fields" });
+      return res.status(400).json({ message: "❌ الحقول الأساسية مطلوبة" });
     }
 
-    // التحقق من الدور
-    if (!["admin", "director"].includes(role)) {
-      return res.status(400).json({ message: "Invalid role for this endpoint" });
+    // الأدوار المسموحة
+    const validRoles = [
+      "admin",
+      "director",
+      "assistant_director",
+      "teacher",
+      "assistant_teacher",
+      "parent",
+    ];
+    if (!validRoles.includes(role)) {
+      return res.status(400).json({ message: "❌ دور المستخدم غير صالح" });
     }
 
-    // فقط الـ Admin يمكنه إضافة Admin أو Director
-    if (requestingUser.role !== "admin") {
-      return res.status(403).json({ message: "Only admin can add admin or director" });
-    }
-
-    // إذا الدور Director يجب تحديد shift
-    if (role === "director" && !shift) {
-      return res.status(400).json({ message: "Shift is required for director" });
-    }
-
-    // التحقق إذا idNumber موجود مسبقًا
-    const existingUser = await User.findOne({ idNumber });
+    // تحقق من عدم تكرار الهوية أو الإيميل
+    const existingUser = await User.findOne({
+      $or: [{ idNumber }, { email }],
+    });
     if (existingUser) {
-      return res.status(400).json({ message: "This idNumber is already registered" });
+      return res.status(400).json({ message: "❌ رقم الهوية أو البريد الإلكتروني مستخدم مسبقًا" });
+    }
+
+    // السماح فقط لـ admin / director / assistant_director بالإضافة
+    if (!["admin", "director", "assistant_director"].includes(requestingUser.role)) {
+      return res.status(403).json({ message: "🚫 غير مصرح لك بإضافة مستخدمين" });
+    }
+
+    let assignedBranch = null;
+    let assignedShift = null;
+
+    // الأدمن يحدد الفرع والشفت يدويًا
+    if (requestingUser.role === "admin") {
+      if (role !== "admin") {
+        if (!branch || !shift) {
+          return res.status(400).json({ message: "❌ يجب تحديد الفرع والشفت" });
+        }
+        assignedBranch = branch;
+        assignedShift = shift;
+      }
+    }
+
+    // المدير والمدير المساعد يتم التوريث منهم
+    if (requestingUser.role === "director" || requestingUser.role === "assistant_director") {
+      assignedBranch = requestingUser.branch;
+      assignedShift = requestingUser.shift;
     }
 
     // توليد كلمة مرور مؤقتة
     const tempPassword = Math.random().toString(36).slice(-8);
     const hashedPassword = await bcrypt.hash(tempPassword, 10);
 
-    // إنشاء المستخدم الجديد
     const newUser = new User({
       fullName,
       email,
       idNumber,
+      phone,
+      gender,
       password: hashedPassword,
       role,
-      shift: role === "director" ? shift : null
-    });
-
-    await newUser.save();
-
-    // إرسال البريد
-    await sendUserEmail(email, tempPassword, fullName);
-
-    res.status(201).json({ message: `${role} added successfully`, user: newUser });
-
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Error adding user", error: error.message });
-  }
-};
-
-
-// إضافة Assistant Director
-const addAssistantDirector = async (req, res) => {
-  try {
-    const { fullName, email, idNumber, shift, directorId } = req.body;
-    const requestingUser = req.user;
-
-    // التحقق من الحقول المطلوبة
-    if (!fullName || !email || !idNumber) {
-      return res.status(400).json({ message: "Missing required fields" });
-    }
-
-    // فقط Admin أو Director يمكنهم إضافة مساعد مدير
-    if (!["admin", "director"].includes(requestingUser.role)) {
-      return res.status(403).json({ message: "Only admin or director can add assistant director" });
-    }
-
-    // التحقق إذا idNumber موجود مسبقًا
-    const existingUser = await User.findOne({ idNumber });
-    if (existingUser) {
-      return res.status(400).json({ message: "This idNumber is already registered" });
-    }
-
-    // تحديد directorId و shift بناءً على من يضيف
-    const assignedDirectorId = requestingUser.role === "admin" ? directorId : requestingUser._id;
-    const assignedShift = requestingUser.role === "admin" ? shift : requestingUser.shift;
-
-    if (!assignedDirectorId) {
-      return res.status(400).json({ message: "Director ID is required" });
-    }
-
-    if (!assignedShift) {
-      return res.status(400).json({ message: "Shift is required" });
-    }
-
-    // توليد كلمة مرور مؤقتة
-    const tempPassword = Math.random().toString(36).slice(-8);
-    const hashedPassword = await bcrypt.hash(tempPassword, 10);
-
-    // إنشاء المستخدم الجديد
-    const newUser = new User({
-      fullName,
-      email,
-      idNumber,
-      password: hashedPassword,
-      role: "assistant_director",
+      branch: assignedBranch,
       shift: assignedShift,
-      directorId: assignedDirectorId
+      directorId: requestingUser.role === "director" ? requestingUser._id : null,
+      assistantDirectorId: requestingUser.role === "assistant_director" ? requestingUser._id : null,
     });
 
     await newUser.save();
 
-    // إرسال البريد
     await sendUserEmail(email, tempPassword, fullName);
 
-    res.status(201).json({ message: "Assistant Director added successfully", user: newUser });
-
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Error adding assistant director", error: error.message });
-  }
-};
-
-const addTeacher = async (req, res) => {
-  try {
-    const { fullName, email, idNumber, directorId, shift } = req.body;
-    const requestingUser = req.user;
-
-    // التحقق من الحقول المطلوبة
-    if (!fullName || !email || !idNumber) {
-      return res.status(400).json({ message: "Missing required fields" });
-    }
-
-    if (!["admin", "director"].includes(requestingUser.role)) {
-      return res.status(403).json({ message: "You do not have permission to add teachers" });
-    }
-
-    // التحقق من idNumber
-    const existingUser = await User.findOne({ idNumber });
-    if (existingUser) {
-      return res.status(400).json({ message: "This idNumber is already registered" });
-    }
-
-    let assignedDirectorId, assignedShift, assignedAssistantDirectorId = null;
-
-    if (requestingUser.role === "admin") {
-      assignedDirectorId = directorId;
-      assignedShift = shift;
-
-      // إيجاد أول مساعد مدير لهذا المدير (إذا موجود)
-      const assistantDirector = await User.findOne({
-        directorId: assignedDirectorId,
-        role: "assistant_director"
-      });
-      if (assistantDirector) assignedAssistantDirectorId = assistantDirector._id;
-
-    } else if (requestingUser.role === "director") {
-      assignedDirectorId = requestingUser._id;
-      assignedShift = requestingUser.shift;
-
-      const assistantDirector = await User.findOne({
-        directorId: requestingUser._id,
-        role: "assistant_director"
-      });
-      if (assistantDirector) assignedAssistantDirectorId = assistantDirector._id;
-    }
-
-    if (!assignedShift) return res.status(400).json({ message: "Shift is required" });
-    if (!assignedDirectorId) return res.status(400).json({ message: "Director ID is required" });
-
-    // توليد كلمة مرور مؤقتة
-    const tempPassword = Math.random().toString(36).slice(-8);
-    const hashedPassword = await bcrypt.hash(tempPassword, 10);
-
-    const newUser = new User({
-      fullName,
-      email,
-      idNumber,
-      password: hashedPassword,
-      role: "teacher",
-      shift: assignedShift,
-      directorId: assignedDirectorId,
-      assistantDirectorId: assignedAssistantDirectorId
-    });
-
-    await newUser.save();
-
-    // إرسال البريد
-    await sendUserEmail(email, tempPassword, fullName);
-
-    res.status(201).json({ message: "Teacher added successfully", user: newUser });
-
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Error adding teacher", error: error.message });
-  }
-};
-
-
-const getAllDirectors = async (req, res) => {
-  try {
-    const directors = await User.find({ role: "director" })
-      .select("-password")
-      .populate("shift")
-      .populate("assistantDirectorId", "fullName email");
-
-    if (!directors.length) {
-      return res.status(404).json({ message: "No directors found" });
-    }
-
-    res.status(200).json({
-      count: directors.length,
-      directors,
+    res.status(201).json({
+      message: `${role} تمت إضافته بنجاح ✅`,
+      user: newUser,
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      message: "Error fetching directors",
-      error: error.message,
-    });
-  }
-};
-
-const getDirector = async (req, res) => {
-  try {
-    const { id, idNumber } = req.params; // أو req.query
-    let director;
-
-    if (id) director = await User.findById(id);
-    else if (idNumber) director = await User.findOne({ idNumber });
-
-    if (!director || director.role !== "director") {
-      return res.status(404).json({ message: "Director not found" });
-    }
-
-    res.status(200).json(director);
-  } catch (error) {
-    res.status(500).json({ message: "Error fetching director", error: error.message });
-  }
-};
-
-const getAllAssistantDirectors = async (req, res) => {
-  try {
-    const assistants = await User.find({ role: "assistant_director" });
-    res.status(200).json(assistants);
-  } catch (error) {
-    res.status(500).json({ message: "Error fetching assistant directors", error: error.message });
-  }
-};
-
-const getAssistantDirector = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const requestingUser = req.user;
-
-    const assistant = await User.findById(id);
-
-    if (!assistant || assistant.role !== "assistant_director") {
-      return res.status(404).json({ message: "Assistant Director not found" });
-    }
-
-    // إذا المدير هو اللي يطلب، لازم يكون هذا المساعد يتبعه فعلاً
-    if (
-      requestingUser.role === "director" &&
-      String(assistant.directorId) !== String(requestingUser._id)
-    ) {
-      return res
-        .status(403)
-        .json({ message: "You are not authorized to view this assistant director" });
-    }
-
-    res.status(200).json(assistant);
-  } catch (error) {
-    console.error(error);
-    res
-      .status(500)
-      .json({ message: "Error fetching assistant director", error: error.message });
+    console.error("❌ Error adding user:", error);
+    res.status(500).json({ message: "❌ حدث خطأ أثناء إضافة المستخدم", error: error.message });
   }
 };
 
 
-// جلب جميع المعلمين
+//  جلب جميع المعلمين الرئيسيين
 const getTeachers = async (req, res) => {
   try {
-    // نحصل فقط على المستخدمين اللي دورهم teacher
     const teachers = await User.find({ role: "teacher" })
-      .select("-password") // نستبعد الباسوورد من النتائج
+      .select("-password")
       .populate("directorId", "fullName email")
       .populate("assistantDirectorId", "fullName email");
 
-    if (!teachers.length) {
-      return res.status(404).json({ message: "No teachers found" });
-    }
+    if (!teachers.length)
+      return res.status(404).json({ message: "⚠️ لا يوجد معلمين" });
 
-    res.status(200).json({
-      count: teachers.length,
-      teachers,
-    });
+    res.status(200).json({ count: teachers.length, teachers });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      message: "Error fetching teachers",
-      error: error.message,
-    });
+    res.status(500).json({ message: "❌ خطأ في جلب المعلمين", error: error.message });
   }
 };
 
+
+// جلب معلم رئيسي واحد
 const getTeacher = async (req, res) => {
   try {
     const { id } = req.params;
-    // نجيب المعلم مع المدير والمدير العام
     const teacher = await User.findOne({ _id: id, role: "teacher" })
       .select("-password")
       .populate("directorId", "fullName email shift role")
       .populate("assistantDirectorId", "fullName email role");
 
-    if (!teacher) {
-      return res.status(404).json({ message: "Teacher not found" });
-    }
+    if (!teacher) return res.status(404).json({ message: "⚠️ المعلم غير موجود" });
 
-    // نحسب عدد الأطفال اللي عنده
-    const childrenCount = await Child.countDocuments({ teacherId: id });
+    const childrenCount = await Child.countDocuments({ teacherMain: id });
 
-    res.status(200).json({
-      teacher,
-      childrenCount,
-    });
+    res.status(200).json({ teacher, childrenCount });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      message: "Error fetching teacher details",
-      error: error.message,
-    });
+    res.status(500).json({ message: "❌ خطأ في جلب بيانات المعلم", error: error.message });
   }
 };
 
+
+// جلب جميع المعلمين المساعدين
+const getAssistantTeachers = async (req, res) => {
+  try {
+    const assistants = await User.find({ role: "assistant_teacher" })
+      .select("-password")
+      .populate("directorId", "fullName email")
+      .populate("assistantDirectorId", "fullName email")
+      .populate("assistantClasses", "className branch shift");
+
+    if (!assistants.length)
+      return res.status(404).json({ message: "⚠️ لا يوجد معلمين مساعدين" });
+
+    res.status(200).json({ count: assistants.length, assistants });
+  } catch (error) {
+    res.status(500).json({ message: "❌ خطأ في جلب المعلمين المساعدين", error: error.message });
+  }
+};
+
+
+// جلب معلم مساعد واحد
+const getAssistantTeacher = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const assistant = await User.findOne({ _id: id, role: "assistant_teacher" })
+      .select("-password")
+      .populate("assistantClasses", "className branch shift");
+
+    if (!assistant)
+      return res.status(404).json({ message: "⚠️ المعلم المساعد غير موجود" });
+
+    res.status(200).json(assistant);
+  } catch (error) {
+    res.status(500).json({ message: "❌ خطأ في جلب المعلم المساعد", error: error.message });
+  }
+};
+
+
+// جلب كل المدراء
+const getAllDirectors = async (req, res) => {
+  try {
+    const directors = await User.find({ role: "director" })
+      .select("-password")
+      .populate("assistantDirectorId", "fullName email");
+
+    if (!directors.length)
+      return res.status(404).json({ message: "⚠️ لا يوجد مديرين" });
+
+    res.status(200).json({ count: directors.length, directors });
+  } catch (error) {
+    res.status(500).json({ message: "❌ خطأ في جلب المديرين", error: error.message });
+  }
+};
+
+
+// جلب مدير واحد
+const getDirector = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const director = await User.findOne({ _id: id, role: "director" }).select("-password");
+
+    if (!director)
+      return res.status(404).json({ message: "⚠️ المدير غير موجود" });
+
+    res.status(200).json(director);
+  } catch (error) {
+    res.status(500).json({ message: "❌ خطأ في جلب بيانات المدير", error: error.message });
+  }
+};
+
+
+// جلب كل المديرين المساعدين
+const getAllAssistantDirectors = async (req, res) => {
+  try {
+    const assistants = await User.find({ role: "assistant_director" })
+      .select("-password")
+      .populate("directorId", "fullName email");
+
+    if (!assistants.length)
+      return res.status(404).json({ message: "⚠️ لا يوجد مديرين مساعدين" });
+
+    res.status(200).json({ count: assistants.length, assistants });
+  } catch (error) {
+    res.status(500).json({ message: "❌ خطأ في جلب المديرين المساعدين", error: error.message });
+  }
+};
+
+
+// جلب مدير مساعد واحد
+const getAssistantDirector = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const assistant = await User.findOne({ _id: id, role: "assistant_director" })
+      .select("-password")
+      .populate("directorId", "fullName email");
+
+    if (!assistant)
+      return res.status(404).json({ message: "⚠️ المدير المساعد غير موجود" });
+
+    res.status(200).json(assistant);
+  } catch (error) {
+    res.status(500).json({ message: "❌ خطأ في جلب بيانات المدير المساعد", error: error.message });
+  }
+};
+
+
 module.exports = {
-addUserByAdmin,
-addAssistantDirector,
-addTeacher,
-getAllDirectors,
-getDirector,
-getAllAssistantDirectors,
-getAssistantDirector,
-getTeachers,
-getTeacher,
+  addUser,
+  getTeachers,
+  getTeacher,
+  getAssistantTeachers,
+  getAssistantTeacher,
+  getAllDirectors,
+  getDirector,
+  getAllAssistantDirectors,
+  getAssistantDirector,
 };

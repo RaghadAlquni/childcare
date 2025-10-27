@@ -7,8 +7,16 @@ const userSchema = new mongoose.Schema({
   password: { type: String, default: null },
   role: {
     type: String,
-    enum: ["admin", "director", "assistant_director", "teacher"],
+    enum: ["admin", "director", "assistant_director", "teacher", "assistant_teacher", "parent"],
     required: true
+  },
+  branch: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Branch",
+    required: function () {
+      // not required for admin
+      return this.role !== "admin"; 
+    },
   },
   shift: {
     type: String,
@@ -25,11 +33,22 @@ const userSchema = new mongoose.Schema({
     ref: "User", // يشير للمساعد إذا هذا user هو معلم
     default: null,
   },
+
+  // only for teachers each teacher has one or more classroom
+  classroom: {
+  type: mongoose.Schema.Types.ObjectId,
+  ref: "Classroom",
+  default: null
+},
   invite: {
     token: { type: String, default: null },
     expiresAt: { type: Date, default: null },
     used: { type: Boolean, default: false }
   },
+
+  assistantClasses: [
+  { type: mongoose.Schema.Types.ObjectId, ref: "Classroom" }
+],
 
   // true بعد تفعيل الحساب
   teacherChildren: [

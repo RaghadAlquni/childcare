@@ -1,0 +1,14 @@
+const express = require("express");
+const classroomRouter = express.Router();
+
+const authenticate = require("../middleware/authentication.js");
+const authorize = require("../middleware/authorization.js");
+
+const { addClassroomByTeacher, addChildToClassroom, addAssistantToClassroom } = require("../controller/userController.js");
+
+// 🏫 المعلم ينشئ فصل جديد
+classroomRouter.post("/addClassroom", authenticate, authorize(["teacher"]), addClassroomByTeacher);
+classroomRouter.post("/addClassroom", authenticate, authorize(["teacher"]), addChildToClassroom);
+classroomRouter.post("/addClassroom", authenticate, authorize(["teacher", ""]), addAssistantToClassroom);
+
+module.exports = classroomRouter;

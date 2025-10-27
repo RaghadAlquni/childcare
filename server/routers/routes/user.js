@@ -1,6 +1,15 @@
 const express = require("express")
+const userRouter = express.Router()
 
-const { addUserByAdmin, addAssistantDirector, addTeacher, getAllDirectors, getDirector, getAllAssistantDirectors, getAssistantDirector, getTeachers, getTeacher} = require("../controller/user")
+const { addUser,
+  getTeachers,
+  getTeacher,
+  getAssistantTeachers,
+  getAssistantTeacher,
+  getAllDirectors,
+  getDirector,
+  getAllAssistantDirectors,
+  getAssistantDirector,} = require("../controller/user")
 const authenticate = require("../middleware/authentication.js");
 const authorize = require("../middleware/authorization.js");
 
@@ -13,10 +22,7 @@ const validateInput = (req, res, next) => {
 };
 
 // add
-const userRouter = express.Router()
-userRouter.post("/addUser", authenticate, authorize(["admin"]), validateInput, addUserByAdmin) // إضافة Admin أو Director (Admin فقط)
-userRouter.post("/addAssistantDirector", authenticate, authorize(["admin", "director"]), validateInput, addAssistantDirector) // إضافة Assistant Director (Admin أو Director)
-userRouter.post("/addTeacher", authenticate, authorize(["admin", "director", "assistant_director"]), validateInput, addTeacher) // إضافة Teacher (Admin أو Director أو Assistant Director)
+userRouter.post("/addUser", authenticate, authorize(["admin", "director", "assistant_director"]), validateInput, addUser) // إضافة Admin أو Director (Admin فقط)
 
 // get
 userRouter.get("/directors", authenticate, authorize(["admin"]), getAllDirectors)
@@ -24,5 +30,8 @@ userRouter.get("/director/:id", authenticate, authorize(["admin"]), getDirector)
 userRouter.get("/assistantDirectors", authenticate, authorize(["admin", "director"]), getAllAssistantDirectors);
 userRouter.get("/assistantDirector/:id", authenticate, authorize(["admin", "director"]), getAssistantDirector);
 userRouter.get("/teachers", authenticate, authorize(["admin", "director", "assistant_director"]), getTeachers);
+userRouter.get("/assistantTeachers", authenticate, authorize(["admin", "director", "assistant_director"]), getAssistantTeachers);
 userRouter.get("/teacher/:id", authenticate, authorize(["admin", "director", "assistant_director"]), getTeacher);
+userRouter.get("/assistantTeacher/:id", authenticate, authorize(["admin", "director", "assistant_director"]), getAssistantTeacher);
+
 module.exports = userRouter;

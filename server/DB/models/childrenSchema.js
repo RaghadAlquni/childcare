@@ -1,39 +1,58 @@
+// DB/models/childrenSchema.js
 const mongoose = require("mongoose");
 
 const childrenSchema = new mongoose.Schema({
-    childName: { type: String, required: true, unique: true},
-    idNumber: { type: Number, required: true },
-    dateOfBirth: { type: Date, required: true },
-    // الجنس
-    gender: {
-     type: String,
-     enum: ['بنت', 'ولد'], // only allows "girl" or "boy"
-     required: true 
-},
-    guardian: [{
-     guardianName: { type: String, required: true },
-     relationship: { type: String, required: true },
-     phoneNumber: { type: String, required: true },
-}],
-    branch: {
-     type: String,
-     enum: ['الفايزية', 'الجزيرة'], // branches
-     required: true
-},
-   status: {
+  childName: { type: String, required: true, trim: true }, 
+  idNumber: { type: Number, required: true, unique: true }, // خلي الهوية فريدة بدل الاسم
+  dateOfBirth: { type: Date, required: true },
+
+  gender: {
     type: String,
-    enum: ['مضاف', 'مؤكد', 'غير مفعل'], // request status
-    defult: 'مضاف' 
+    enum: ["بنت", "ولد"],
+    required: true
+  },
+
+  guardian: [{
+    guardianName: { type: String, required: true },
+    relationship: { type: String, required: true },
+    phoneNumber: { type: String, required: true },
+  }],
+
+  branch: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Branch",
+    required: true
+  },
+
+  status: {
+    type: String,
+    enum: ["مضاف", "مؤكد", "غير مفعل"],
+    default: "مضاف" // ✅ تصحيح spelling
+  },
+
+  classroom: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Classroom",
+    default: null,   // لازم يصير اختياري عشان إضافة وليّ الأمر بدون فصل/معلم
+  },
+
+  teacherMain: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    default: null,   // نفس السبب
+  },
+  subscription: {
+  type: mongoose.Schema.Types.ObjectId,
+  ref: "Subscription",
+  required: false,
 },
-   // class and their teacher
-   classId: { type: mongoose.Schema.Types.ObjectId, ref: "Class" },
-   teacherId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-   shift: { type: String, enum: ["صباح", "مساء"]}
-},
-{
-   timestamps: { createdAt: "submittedAt", updatedAt: "updateAt"}
-  });
+subscriptionEnd: { type: Date },
+
+  shift: { type: String, enum: ["صباح", "مساء"], required: true },
+}, {
+  timestamps: { createdAt: "submittedAt", updatedAt: "updatedAt" } // ✅ تصحيح updatedAt
+});
 
 
 
-  module.exports = mongoose.model("Children", childrenSchema);
+module.exports = mongoose.model("Children", childrenSchema);
