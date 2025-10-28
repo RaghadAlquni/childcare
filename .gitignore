@@ -1,5 +1,5 @@
 # Ignore the server folder completely (for now)
-server/
+
 
 # System files
 .DS_Store

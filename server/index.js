@@ -61,6 +61,11 @@ app.use(userRouter)
 const branchRouter = require("./routers/routes/branch.js")
 app.use(branchRouter)
 
+
+const eventRouter = require("./routers/routes/event.js")
+app.use(eventRouter)
+
+
 const PORT = process.env.PORT || 5000 ;
 app.listen(PORT, () => {
   console.log(`server run on ${PORT}`);

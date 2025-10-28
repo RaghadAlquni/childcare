@@ -8,7 +8,7 @@ const { addClassroomByTeacher, addChildToClassroom, addAssistantToClassroom } = 
 
 // 🏫 المعلم ينشئ فصل جديد
 classroomRouter.post("/addClassroom", authenticate, authorize(["teacher"]), addClassroomByTeacher);
-classroomRouter.post("/addClassroom", authenticate, authorize(["teacher"]), addChildToClassroom);
-classroomRouter.post("/addClassroom", authenticate, authorize(["teacher", ""]), addAssistantToClassroom);
+classroomRouter.post("/addChildCalssroom", authenticate, authorize(["teacher"]), addChildToClassroom);
+classroomRouter.post("/assistantClassroom", authenticate, authorize(["teacher", ""]), addAssistantToClassroom);
 
 module.exports = classroomRouter;

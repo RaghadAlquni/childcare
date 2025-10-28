@@ -52,6 +52,53 @@ const cards = [
   },
 ];
 
+const secondCards = [
+  {
+    title: "متابعة الطفل",
+    text: "نسعى لتقديم بيئة تعليمية آمنة وملهمة تُسهم في بناء شخصية الطفل وتنمية مهاراته.",
+    color: "#F9B236",
+    icon: <AiOutlineEye />,
+    rowSpan: 2,
+    colSpan: 1,
+  },
+  {
+    title: "برامج متنوعة",
+    text: "نوفّر تجربة تعليمية ممتعة تُنمّي حب التعلم والاستكشاف عند الأطفال.",
+    color: "#E84191",
+    icon: <AiOutlineMail />,
+    rowSpan: 2, 
+    colSpan: 1,
+  },
+  {
+    title: "بيئة مهيأة",
+    text: " نوفّر تجربة تعليمية ممتعة تُنمّي حب التعلم والاستكشاف عند الأطفال.",
+    color: "#17B3DC",
+    icon: <AiOutlineStar />,
+    rowSpan: 3,
+    colSpan: 1,
+    maxWidth: 300,
+  },
+  {
+    title: "كوادر مؤهلة",
+    text: "تطوير مهارات الأطفال الاجتماعية والعاطفية والفكرية، وتمكينهم من التعلم بثقة واستقلالية.",
+    color: "#F9B236",
+    icon: <AiOutlineCheckCircle />,
+    rowStart: 3,
+    colSpan: 2,
+    pt: 6, // padding داخلي من الأعلى
+  },
+  {
+    title: "قصتنا",
+    text: "يتكوّن من نخبة من المعلمات المتخصصات في التربية والتعليم المبكر، ملتزمات بتقديم أفضل رعاية وتعليم للأطفال.",
+    color: "#F9B236",
+    icon: <AiOutlineBook />,
+    rowStart: 4,
+    colSpan: 3,
+    pt: 6, // padding داخلي من الأعلى
+    maxWidth: 1080,
+  },
+];
+
 const WhoUs = () => {
   return (
     <div>
@@ -135,6 +182,74 @@ const WhoUs = () => {
 </Grid>
 
       </div>
+
+<div>
+  <h1 className="whoUsTitle">
+    بماذا تتميز <span className="highlight">واحة المعرفة؟</span>
+  </h1>
+
+  <Grid
+    templateColumns={{
+      base: "1fr", // جوال: كارد واحد في كل صف
+      sm: "repeat(2, 1fr)", // شاشات صغيرة مثل iPhone Plus
+      md: "repeat(2, 1fr)", // آيباد أو شاشات متوسطة: صفين كل صف فيه كاردين
+      lg: "repeat(4, 1fr)", // شاشات كبيرة: ٤ كروت بنفس الصف
+    }}
+    gap={{ base: 4, md: 6 }}
+    p={{ base: "20px", md: "40px 60px" }}
+    justifyContent="center"
+    alignItems="stretch" // يخلي كل الكروت بنفس الطول حسب أطول كارد
+  >
+    {secondCards.slice(0, 4).map((card, index) => (
+      <GridItem
+        key={index}
+        colSpan={1}
+        display="flex"
+        justifyContent="center"
+        alignItems="stretch"
+      >
+        <Box
+          bg={card.color + "19"}
+          border={`1px dashed ${card.color}`}
+          borderRadius="40px"
+          display="flex"
+          flexDirection="column"
+          justifyContent="center"
+          alignItems="center"
+          textAlign="center"
+          p={{ base: 4, md: 6 }}
+          gap={3}
+          w="100%"
+          minH="230px" // يخليها متساوية الارتفاع
+          transition="all 0.3s ease"
+          _hover={{
+            transform: "translateY(-4px)",
+            bg: `${card.color}0D`,
+          }}
+        >
+          <Icon as={card.icon.type} boxSize={8} color={card.color} mb={2} />
+          <Heading
+            fontFamily="Cairo, sans-serif"
+            size="md"
+            color="#292929"
+            mb={1}
+          >
+            {card.title}
+          </Heading>
+          <Text
+            color="#292929"
+            fontSize="sm"
+            whiteSpace="pre-line"
+            lineHeight="1.8"
+            px="10px"
+          >
+            {card.text}
+          </Text>
+        </Box>
+      </GridItem>
+    ))}
+  </Grid>
+</div>
     </div>
 
      {/* القسم الثاني */}
