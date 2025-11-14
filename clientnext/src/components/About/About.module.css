@@ -1,0 +1,35 @@
+/* ✨ حركة الطفو + توهج ذهبي ناعم */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+    filter: drop-shadow(0 0 4px rgba(249, 178, 54, 0.25))
+            drop-shadow(0 0 10px rgba(249, 178, 54, 0.40));
+  }
+  50% {
+    transform: translateY(-10px);
+    filter: drop-shadow(0 0 12px rgba(249, 178, 54, 0.5))
+            drop-shadow(0 0 18px rgba(255, 240, 190, 0.4));
+  }
+}
+
+/* 💫 نبض التوهج */
+@keyframes glowPulse {
+  0%, 100% {
+    opacity: 1;
+    filter: brightness(1);
+  }
+  50% {
+    opacity: 2;
+    filter: brightness(1.1);
+  }
+}
+
+/* ندمج الحركتين معًا */
+.float {
+  animation: float 4s ease-in-out infinite, glowPulse 3s ease-in-out infinite
+}
+
+.float-delay {
+  animation: float 4s ease-in-out infinite, glowPulse 3s ease-in-out infinite;
+  animation-delay: 2s;
+}

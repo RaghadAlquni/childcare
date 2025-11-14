@@ -1,0 +1,37 @@
+@import "tailwindcss";
+/* تثبيت الاتجاه العام RTL للموقع بالكامل */
+html[dir="rtl"] {
+  direction: rtl;
+  text-align: right;
+  scroll-behavior: smooth;
+}
+
+body {
+  text-align: right;
+  overflow-x: hidden;
+}
+
+/* تعديل بسيط للأزرار والليست */
+button, li, p, h1, h2, h3, span {
+  direction: rtl;
+  text-align: right;
+}
+
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+.animate-float-delayed {
+  animation: float 4s ease-in-out infinite;
+  animation-delay: 2s;
+}
