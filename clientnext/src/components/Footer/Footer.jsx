@@ -3,7 +3,7 @@ import React from "react";
 import { FaTiktok, FaWhatsapp, FaInstagram, FaSnapchatGhost } from "react-icons/fa";
 
 
-export default function Footer() {
+const Footer = () => {
   return (
     <footer dir="rtl" className="relative overflow-hidden bg-white">
       {/* الخلفية */}
@@ -138,3 +138,5 @@ export default function Footer() {
     </footer>
   );
 }
+
+export default Footer;
