@@ -1,11 +1,9 @@
 "use client";
 
 import { useAppSelector } from "@/redux/hooks";
-import AdminConfirmed from "@/components/dashboard/children/confirmedChild/AdminConfirmed";
-import DirectorConfirmed from "@/components/dashboard/children/confirmedChild/DirectorConfirmed";
-import TeacherConfirmed from "@/components/dashboard/children/confirmedChild/TeacherConfirmed";
+import Branch from "@/components/dashboard/branch/adminBranch";
 
-export default function DashboardChildren() {
+export default function DashboardHome() {
 
   const { user, loading } = useAppSelector((state) => state.auth);
 
@@ -18,11 +16,7 @@ export default function DashboardChildren() {
   // 3) حسب الدور
   switch (user.role) {
     case "admin":
-      return <AdminConfirmed />;
-    case "director":
-      return <DirectorConfirmed />;
-    case "teacher":
-      return <TeacherConfirmed />;
+      return <Branch />;
     default:
       return <p>لا يوجد صفحة لهذا الدور</p>;
   }

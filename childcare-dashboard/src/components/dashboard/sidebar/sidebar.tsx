@@ -1,13 +1,16 @@
 "use client";
 
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import Swal from "sweetalert2";
+import axios from "axios";
 import { FiX } from "react-icons/fi";
 import { usePathname } from "next/navigation";
 import { sidebarLinks, SidebarItem } from "@/constants/sidebarLinks";
 import { useTheme } from "@/context/ThemeContext";
 import ArrowDownIcon from "../../../../public/icons/downArrow";
 import LogoutIcon from"../../../../public/icons/logoutIcon";
+import SideArrow from"../../../../public/icons/sideArrow";
 
 const Sidebar = ({ role }: { role: string }) => {
   const pathname = usePathname();
@@ -79,23 +82,8 @@ const Sidebar = ({ role }: { role: string }) => {
           <h1 className="text-[22px] font-bold text-[#F9B236]">واحة المعرفة</h1>
         </div>
 
-        {/* البحث */}
-        <div className="w-full flex items-center bg-[var(--bg)] border border-[var(--border)] rounded-[13px] py-2 px-3 mb-4 justify-between">
-          <input
-            type="text"
-            placeholder="ابحث عن موظف او طالب او فرع"
-            className="flex-1 bg-transparent text-right text-[10px] text-[var(--text)] placeholder-[#D5D5D5] outline-none"
-          />
-          <img
-            src="https://codia-f2c.s3.us-west-1.amazonaws.com/image/2025-11-16/oR4GffMmPR.png"
-            width={20}
-            height={20}
-            alt="search"
-          />
-        </div>
-
         {/* عنوان القائمة */}
-        <span className="text-[var(--text)] opacity-60 text-[14px] mb-3 self-start">
+        <span className="text-[var(--text)] opacity-60 text-[14px] my-3 self-start">
           القائمة الرئيسية
         </span>
 
@@ -185,13 +173,15 @@ const Sidebar = ({ role }: { role: string }) => {
                         <Link
                           key={child.name}
                           href={child.path}
-                          className={`flex items-center justify-between py-2 px-3 rounded-[13px]
+                          className={`flex items-center py-2 rounded-[13px]
                             ${
                               activeChild
                                 ? "bg-[rgba(249,178,54,0.18)] text-[#F9B236]"
                                 : "text-[var(--text)]"
                             }`}
-                        >
+                        > 
+                        <span className="opacity-100"> <SideArrow /> </span>
+
                           <div className="flex items-center gap-2">
                             <ChildIcon
                               className={`w-5 h-5 ${
@@ -204,7 +194,6 @@ const Sidebar = ({ role }: { role: string }) => {
                               {child.name}
                             </span>
                           </div>
-                          <span className="opacity-0">•</span>
                         </Link>
                       );
                     })}
@@ -215,8 +204,42 @@ const Sidebar = ({ role }: { role: string }) => {
           })}
         </div>
 
-        {/* Light / Dark + Logout */}
-        <div className="mt-auto w-full flex flex-col gap-3">
+        {/* Light / Dark + Logout + Check in */}
+        <div className="mt-auto pt-4  w-full flex flex-col gap-3">
+           {/* زر تحضير الموظفة حسب دورها */}
+{["director", "assistant_director", "teacher", "assistant_teacher"].includes(role) && (
+  <button
+    onClick={async () => {
+      try {
+        const token = localStorage.getItem("token");
+
+        const res = await axios.post(
+          "http://localhost:5000/employee/check-in",
+          {},
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+
+        Swal.fire({
+          icon: "success",
+          title: "تم تسجيل حضورك بنجاح",
+          confirmButtonText: "حسناً",
+        });
+
+      } catch (err: any) {
+        Swal.fire({
+          icon: "error",
+          title: "تنبيه",
+              text: err.response?.data?.message || "حدث خطأ غير متوقع",
+          confirmButtonText: "إغلاق",
+        });
+      }
+    }}
+    className="w-full bg-[#F9B236] text-white py-3 rounded-[13px] text-[16px] font-medium"
+  >
+    التحضير اليومي
+  </button>
+)}
+
           <div className="grid grid-cols-2 w-full bg-[var(--card)] border border-[var(--border)] rounded-[13px] p-1 gap-2">
             <button
               onClick={() => toggleTheme("light")}

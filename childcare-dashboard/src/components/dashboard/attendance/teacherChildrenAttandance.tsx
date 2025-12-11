@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 interface Child {
   id: string;
@@ -183,13 +184,23 @@ export default function AttendancePage() {
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      alert("تم تسجيل الحضور بنجاح ✔");
+      Swal.fire({
+  icon: "success",
+  title: "تم التحضير",
+  text: "تم تسجيل حضور الأطفال بنجاح ✔",
+  confirmButtonColor: "#F9B236"
+});
+
 
       const remaining = children.filter((c) => !selectedChildren.includes(c.id));
       setChildren(remaining);
       setSelectedChildren([]);
     } catch (error) {
-      alert("حدث خطأ أثناء التحضير ❌");
+       Swal.fire({
+              icon: "error",
+              title: "خطأ أثناء التحضير",
+            });
+          
     }
 
     setLoading(false);

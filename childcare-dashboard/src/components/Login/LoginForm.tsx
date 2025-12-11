@@ -2,21 +2,22 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import {
   loginRequest,
   loginSuccess,
   loginFailure,
 } from "@/redux/authSlice";
-import { RootState } from "@/redux/store";
 import { jwtDecode } from "jwt-decode";
 import { api } from "@/lib/axios";
+import Swal from "sweetalert2";
 
 interface DecodedToken {
   _id: string;
   fullName: string;
   role: string;
   shift: string;
+  branch?: string;
   exp: number;
 }
 
@@ -28,7 +29,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<any>({});
 
-  // validate
+  // Validate
   const validate = () => {
     let newErrors: any = {};
 
@@ -36,10 +37,24 @@ const Login = () => {
     if (!password.trim()) newErrors.password = "يرجى إدخال كلمة المرور";
 
     setErrors(newErrors);
+
+    // 🔥 SweetAlert للحقول الناقصة
+    if (Object.keys(newErrors).length > 0) {
+      Swal.fire({
+        title: "تنبيه",
+        text: "يرجى تعبئة جميع الحقول المطلوبة",
+        icon: "warning",
+        confirmButtonText: "حسناً",
+        didOpen: () => {
+          const el = document.querySelector(".swal2-container") as HTMLElement;
+          if (el) el.style.zIndex = "20000";
+        },
+      });
+    }
+
     return Object.keys(newErrors).length === 0;
   };
 
-  // submit
   const handleSubmit = async (e: any) => {
     e.preventDefault();
 
@@ -48,29 +63,64 @@ const Login = () => {
     try {
       dispatch(loginRequest());
 
-      const res = await api.post("/login", {
-        email,
-        password,
-      });
+      const res = await api.post("/login", { email, password });
 
       const token = res.data.token;
+
+      // احفظ التوكن
       localStorage.setItem("token", token);
+
+      // حللي التوكن
+      const decoded = jwtDecode<DecodedToken>(token);
+
+      // ❗ مهم جداً نحفظ بيانات المستخدم
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          _id: decoded._id,
+          fullName: decoded.fullName,
+          role: decoded.role,
+          shift: decoded.shift,
+          branch: decoded.branch ?? null,
+        })
+      );
 
       dispatch(loginSuccess(token));
 
-      // decode to get role
-      const decoded = jwtDecode<DecodedToken>(token);
-      const role = decoded.role;
+      // 🔥 SweetAlert نجاح تسجيل الدخول
+      await Swal.fire({
+        title: "تم تسجيل الدخول بنجاح",
+        text: `أهلاً ${decoded.fullName}!`,
+        icon: "success",
+        confirmButtonText: "متابعة",
+        timer: 1500,
+        didOpen: () => {
+          const el = document.querySelector(".swal2-container") as HTMLElement;
+          if (el) el.style.zIndex = "20000";
+        },
+      });
 
-      // redirect based on role
+      // التوجيه حسب الدور
+      const role = decoded.role.toLowerCase();
+
       if (role === "admin") router.push("/dashboard?role=admin");
       else if (role === "director") router.push("/dashboard?role=director");
       else if (role === "teacher") router.push("/dashboard?role=teacher");
       else if (role === "assistant_teacher") router.push("/dashboard?role=assistant_teacher");
 
-    } catch (err: any) {
+    } catch (err) {
       dispatch(loginFailure("خطأ في تسجيل الدخول"));
-      alert("البريد الإلكتروني أو كلمة المرور غير صحيحة");
+
+      Swal.fire({
+        title: "خطأ",
+        text: "البريد الإلكتروني أو كلمة المرور غير صحيحة",
+        icon: "error",
+        confirmButtonText: "إعادة المحاولة",
+        didOpen: () => {
+          const el = document.querySelector(".swal2-container") as HTMLElement;
+          if (el) el.style.zIndex = "20000";
+        },
+      });
     }
   };
 

@@ -65,7 +65,7 @@ export default function DirectorConfirmed() {
         <div className="flex flex-row-reverse justify-between items-center mb-6">
           <button
             onClick={() => setOpenPopup(true)}
-            className="bg-[#f9b236] text-white font-bold text-[14px] px-6 py-2 rounded-full"
+            className="bg-[#f9b236] text-white font-bold text-[14px] px-6 py-2 rounded-xl"
           >
             <p className="mt-1">إضافة طفل</p>
           </button>

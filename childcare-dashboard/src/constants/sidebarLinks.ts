@@ -40,14 +40,15 @@ export const sidebarLinks: SidebarLinksType = {
     { name: "التحضير", path: "/dashboard/attendance", icon: AttendanceIcon },
 
     { name: "الفروع", path: "/dashboard/branches", icon: BranchIcon },
+    { name: "الاشتراكات", path: "/dashboard/subscription", icon: BranchIcon },
 
     {
       name: "العمليات المالية",
       path: "/dashboard/finance",
       icon: WalletIcon,
       children: [
-        { name: "المدفوعات", path: "/dashboard/payments", icon: WalletIcon },
-        { name: "المصروفات", path: "/dashboard/expenses", icon: WalletIcon },
+        { name: "المدفوعات", path: "/dashboard/finance/income", icon: WalletIcon },
+        { name: "المصروفات", path: "/dashboard/finance/expense", icon: WalletIcon },
       ],
     },
 
@@ -82,13 +83,14 @@ export const sidebarLinks: SidebarLinksType = {
       ],
     },
 
+
     {
       name: "العمليات المالية",
       path: "/dashboard/finance",
       icon: WalletIcon,
       children: [
-        { name: "المدفوعات", path: "/dashboard/payments", icon: WalletIcon },
-        { name: "المصروفات", path: "/dashboard/expenses", icon: WalletIcon },
+        { name: "المدفوعات", path: "/dashboard/finance/income", icon: WalletIcon },
+        { name: "المصروفات", path: "/dashboard/finance/expense", icon: WalletIcon },
       ],
     },
 

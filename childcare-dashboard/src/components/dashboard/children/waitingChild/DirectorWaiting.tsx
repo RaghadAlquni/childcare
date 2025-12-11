@@ -214,103 +214,101 @@ const filteredChildren = children.filter((child) => {
 />
  
       {/* TABLE */}
-      <div className="bg-[var(--card)] border border-[var(--border)] overflow-x-auto md:overflow-visible mt-4 max-w-[310px] mx-auto md:max-w-none">
+{/* TABLE */}
+<div className="bg-[var(--card)] border border-[var(--border)] overflow-x-auto md:overflow-visible mt-4 max-w-[310px] mx-auto md:max-w-none">
 
-            <table className="min-w-[500px] md:min-w-0 w-full table-auto text-right border-collapse">
+  {/* ⭐⭐ لا يوجد أطفال ⭐⭐ */}
+  {filteredChildren.length === 0 && (
+    <p className="text-center text-gray-500 py-6">
+      لا يوجد أطفال في قائمة الانتظار
+    </p>
+  )}
 
-          <thead className="bg-[rgba(249,178,54,0.1)] text-[var(--text)] font-bold">
-            <tr className="border-b border-[var(--border)]">
+  {/* ⭐⭐ الجدول يظهر فقط إذا فيه أطفال ⭐⭐ */}
+  {filteredChildren.length > 0 && (
+    <table className="min-w-[500px] md:min-w-0 w-full table-auto text-right border-collapse">
 
-              {/* Checkbox – ALWAYS VISIBLE */}
-              <th className="p-4 border-l border-[var(--border)]">
-                <input type="checkbox" checked={allSelected} onChange={toggleSelectAll} />
-              </th>
+      <thead className="bg-[rgba(249,178,54,0.1)] text-[var(--text)] font-bold">
+        <tr className="border-b border-[var(--border)]">
 
-              {/* Name – ALWAYS VISIBLE */}
-              <th className="p-4 border-l border-[var(--border)]">اسم الطفل</th>
+          <th className="p-4 border-l border-[var(--border)]">
+            <input type="checkbox" checked={allSelected} onChange={toggleSelectAll} />
+          </th>
 
-              {/* AGE – HIDDEN ON MOBILE */}
-              <th className="p-4 border-l border-[var(--border)] hidden md:table-cell">
-                العمر
-              </th>
+          <th className="p-4 border-l border-[var(--border)]">اسم الطفل</th>
 
-              {/* Subscription – HIDDEN ON MOBILE */}
-              <th className="p-4 border-l border-[var(--border)] hidden md:table-cell">
-                نوع الاشتراك
-              </th>
+          <th className="p-4 border-l border-[var(--border)] hidden md:table-cell">
+            العمر
+          </th>
 
-              {/* Guardian – HIDDEN ON MOBILE */}
-              <th className="p-4 border-l border-[var(--border)] hidden md:table-cell">
-                رقم ولي الأمر
-              </th>
+          <th className="p-4 border-l border-[var(--border)] hidden md:table-cell">
+            نوع الاشتراك
+          </th>
 
-              {/* Actions – HIDDEN ON MOBILE */}
-              <th className="p-4 border-l border-[var(--border)] hidden md:table-cell">
-                الإجراءات
-              </th>
-            </tr>
-          </thead>
+          <th className="p-4 border-l border-[var(--border)] hidden md:table-cell">
+            رقم ولي الأمر
+          </th>
 
-          <tbody>
-            {filteredChildren.map((child) => (
-              <tr
-                key={child.id}
-                className="border-b border-[var(--border)] hover:bg-[var(--bordergray)] transition"
-              >
+          <th className="p-4 border-l border-[var(--border)] hidden md:table-cell">
+            الإجراءات
+          </th>
+        </tr>
+      </thead>
 
-                {/* Checkbox */}
-                <td className="p-4 border-l border-[var(--border)]">
-                  <input
-                    type="checkbox"
-                    checked={selected.includes(child.id)}
-                    onChange={() => toggleOne(child.id)}
-                  />
-                </td>
+      <tbody>
+        {filteredChildren.map((child) => (
+          <tr
+            key={child.id}
+            className="border-b border-[var(--border)] hover:bg-[var(--bordergray)] transition"
+          >
+            <td className="p-4 border-l border-[var(--border)]">
+              <input
+                type="checkbox"
+                checked={selected.includes(child.id)}
+                onChange={() => toggleOne(child.id)}
+              />
+            </td>
 
-                {/* Name */}
-                <td className="p-4 border-l border-[var(--border)] text-[var(--text)]">
-                  {child.name}
-                </td>
+            <td className="p-4 border-l border-[var(--border)] text-[var(--text)]">
+              {child.name}
+            </td>
 
-                {/* AGE */}
-                <td className="p-4 border-l border-[var(--border)] text-[var(--text)] hidden md:table-cell">
-                  {child.age}
-                </td>
+            <td className="p-4 border-l border-[var(--border)] text-[var(--text)] hidden md:table-cell">
+              {child.age}
+            </td>
 
-                {/* Subscription */}
-                <td className="p-4 border-l border-[var(--border)] text-[var(--text)] hidden md:table-cell">
-                  {child.subscriptionType}
-                </td>
+            <td className="p-4 border-l border-[var(--border)] text-[var(--text)] hidden md:table-cell">
+              {child.subscriptionType}
+            </td>
 
-                {/* Guardian */}
-                <td className="p-4 border-l border-[var(--border)] hidden text-[var(--text)] md:table-cell">
-                  {child.guardian.length > 0 ? (
-                    child.guardian.map((g, idx) => (
-                      <div key={idx} className="text-sm">
-                        {g.phoneNumber} — {g.relationship}
-                      </div>
-                    ))
-                  ) : (
-                    "—"
-                  )}
-                </td>
+            <td className="p-4 border-l border-[var(--border)] hidden text-[var(--text)] md:table-cell">
+              {child.guardian.length > 0 ? (
+                child.guardian.map((g, idx) => (
+                  <div key={idx} className="text-sm">
+                    {g.phoneNumber} — {g.relationship}
+                  </div>
+                ))
+              ) : (
+                "—"
+              )}
+            </td>
 
-                {/* Actions */}
-                <td className="p-4 gap-3 justify-center hidden md:flex">
-                  <button className="w-8 h-8 pt-2 flex items-center justify-center cursor-pointer rounded-md bg-gray-100 hover:bg-gray-200 transition">
-                    ✉️
-                  </button>
+            <td className="p-4 gap-3 justify-center hidden md:flex">
+              <button className="w-8 h-8 pt-2 flex items-center justify-center cursor-pointer rounded-md bg-gray-100 hover:bg-gray-200 transition">
+                ✉️
+              </button>
 
-                  <button className="w-8 h-8 pt-2 flex items-center justify-center cursor-pointer rounded-md bg-red-100 hover:bg-red-200 transition">
-                    🗑️
-                  </button>
-                </td>
+              <button className="w-8 h-8 pt-2 flex items-center justify-center cursor-pointer rounded-md bg-red-100 hover:bg-red-200 transition">
+                🗑️
+              </button>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  )}
+</div>
 
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
 
       {/* ACTION BUTTONS */}
       {selected.length > 0 && (

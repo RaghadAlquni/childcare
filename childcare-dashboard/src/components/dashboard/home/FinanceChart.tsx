@@ -38,13 +38,13 @@ export default function FinanceChart({ chartData }: any) {
     backgroundColor: colors.card,
 
     title: {
-      text: "العمليات المالية",
+      text: "العمليات المالية خلال آخر 6 أشهر",
       right: "0",
       top: "10",
       textStyle: {
         fontSize: 20,
         fontWeight: "bold",
-        color: colors.text, // الآن يتغير حسب الدارك
+        color: colors.text,
         fontFamily: "Tajawal, sans-serif",
       },
     },
@@ -70,7 +70,7 @@ export default function FinanceChart({ chartData }: any) {
         type: "line",
         smooth: true,
         data: chartData.map((d: any) => d.payments),
-        lineStyle: { color: "#17B3DC", width: 3 },
+        lineStyle: { color: "#17B3DC", width: 2 },
         areaStyle: {
           color: {
             type: "linear",
@@ -87,7 +87,7 @@ export default function FinanceChart({ chartData }: any) {
         type: "line",
         smooth: true,
         data: chartData.map((d: any) => d.expenses),
-        lineStyle: { color: "#D74C92", width: 3 },
+        lineStyle: { color: "#D74C92", width: 2 },
         areaStyle: {
           color: {
             type: "linear",

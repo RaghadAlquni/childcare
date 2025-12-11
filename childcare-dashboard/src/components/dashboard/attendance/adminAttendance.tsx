@@ -174,7 +174,7 @@ export default function AttendancePage() {
         {/* العنوان */}
         <div className="max-w-5xl mx-auto">
           <h1 className="text-[24px] font-bold text-right text-[var(--text)]">
-            <span className="text-[#d5d5d5] text-[20px] md:font-medium">
+            <span className="text-[#d5d5d5] text-[20px] md:font-bold">
               التحضير /
             </span>{" "}
             سجل تحضير الموظفات

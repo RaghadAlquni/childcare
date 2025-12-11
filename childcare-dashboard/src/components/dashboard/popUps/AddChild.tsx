@@ -158,7 +158,7 @@ const AddChildPopup: React.FC<AddChildPopupProps> = ({ open, setOpen }) => {
         <div className="flex justify-center mb-6 mt-10">
           <div className="w-full bg-white rounded-xl border border-gray-200 flex overflow-hidden shadow-sm">
             <button
-              className={`flex-1 py-3 text-center ${
+              className={`flex-1 py-3  text-center ${
                 activeTab === "new"
                   ? "text-[#F9B236] bg-[rgba(249,178,54,0.1)] border-t-[3px] border-[#F9B236] font-bold"
                   : "text-gray-600"
@@ -322,13 +322,13 @@ const NewChildForm = ({ teachers, subscriptions }: any) => {
     <form onSubmit={handleSubmit} className="flex flex-col gap-6">
       <h2 className="text-[22px] font-bold text-gray-800">تسجيل طفل جديد</h2>
 
-      <p className="text-sm text-gray-700 bg-[#FFF8E8] rounded-xl px-4 py-2 border border-[#FFE3A9]">
+      <p className="text-sm text-gray-700 bg-[#FFF8E8] rounded-xl px-4 py-2 border">
         <span className="font-semibold">تنبيه:</span> إذا كان الطفل مسجل مسبقًا، اختاري (تجديد اشتراك).
       </p>
 
       {childInfo && <ChildInfoCard child={childInfo} />}
 
-      <Input name="fullName" label="اسم الطفل" placeholder="اسم الطفل" />
+      <Input name="fullName" label="اسم الطفل الرباعي" placeholder="اسم الطفل الرباعي" />
 
       <Input
         name="civilId"
