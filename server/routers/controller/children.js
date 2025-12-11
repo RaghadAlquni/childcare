@@ -202,7 +202,7 @@ const addChild = async (req, res) => {
       branch: finalBranch,
       shift: finalShift,
       subscription: subscription._id,
-      paymentType: "تسجيل جديد",
+      paymentType: "Apple Pay",
       addedBy: u._id,
       note: `تسجيل طفل جديد: ${child.childName}`
     });
@@ -226,7 +226,7 @@ const addChild = async (req, res) => {
 const renewSubscription = async (req, res) => {
   try {
     const u = req.user;
-    const { childId, subscriptionId, teacherMain } = req.body;
+    const { childId, subscriptionId, teacherMain, dateOfBirth } = req.body;
 
     const child = await Children.findById(childId);
     if (!child) {
@@ -294,10 +294,16 @@ const renewSubscription = async (req, res) => {
     child.subscription = subscription._id;
     child.subscriptionStart = new Date();
     child.subscriptionEnd = subscription.subscriptionEnd;
+
     child.teacherMain = teacherMain || child.teacherMain;
     child.branch = finalBranch;
     child.shift = finalShift;
     child.status = "مؤكد";
+
+    /* ⭐⭐ تحديث تاريخ الميلاد عند التجديد ⭐⭐ */
+    if (dateOfBirth) {
+      child.dateOfBirth = new Date(dateOfBirth);
+    }
 
     await child.save();
 
@@ -324,7 +330,6 @@ const renewSubscription = async (req, res) => {
         { $addToSet: { managedChildren: child._id } }
       );
 
-      /* ⭐⭐ إضافة الطفل للمساعد الجديد ⭐⭐ */
       const newAssistant = await User.findOne({
         role: "assistant_director",
         directorId: newDirector._id
@@ -344,7 +349,7 @@ const renewSubscription = async (req, res) => {
       branch: finalBranch,
       shift: finalShift,
       subscription: subscription._id,
-      paymentType: "تجديد اشتراك",
+      paymentType: "Apple Pay",
       addedBy: u._id,
       note: `تجديد اشتراك للطفل: ${child.childName}`,
     });
@@ -362,61 +367,6 @@ const renewSubscription = async (req, res) => {
     });
   }
 };
-
-
-
-
-// اضافة طفل من البارنتس
-const addChildParent = async (req, res) => {
-  try {
-    const {
-      childName,
-      idNumber,
-      dateOfBirth,
-      gender,
-      guardian,
-      branch,
-      shift,
-      subscriptionId,
-    } = req.body;
-
-    if (!childName || !idNumber || !dateOfBirth || !gender)
-      return res.status(400).json({ message: "الاسم، الهوية، الميلاد، الجنس مطلوبة" });
-
-    if (!["بنت", "ولد"].includes(gender))
-      return res.status(400).json({ message: "الجنس يجب أن يكون (بنت) أو (ولد)" });
-
-    if (!Array.isArray(guardian) || guardian.length < 2)
-      return res.status(400).json({ message: "يجب إدخال بيانات وليي أمر اثنين على الأقل" });
-
-    const b = await Branch.findById(branch);
-    if (!b) return res.status(404).json({ message: "الفرع غير موجود" });
-
-    const child = await Children.create({
-      childName,
-      idNumber,
-      dateOfBirth,
-      gender,
-      guardian,
-      branch,
-      shift,
-      subscription: subscriptionId,
-      status: "مضاف",
-    });
-
-    return res.status(201).json({
-      message: "تم استلام طلب تسجيل الطفل بنجاح بانتظار موافقة الإدارة",
-      child,
-    });
-
-  } catch (error) {
-    res.status(500).json({
-      message: "حدث خطأ أثناء الإضافة ❌",
-      error: error.message,
-    });
-  }
-};
-
 
 
 // =======================
@@ -460,7 +410,7 @@ const confirmChild = async (req, res) => {
       child: child._id,
       branch: child.branch,
       subscription: child.subscription._id,
-      paymentType: "تسجيل جديد",
+      paymentType: "Apple Pay",
       addedBy: u._id,
       note: `تسجيل جديد بعد تأكيد الطفل ${child.childName}`,
     });
@@ -1043,11 +993,204 @@ const deleteManyChildren = async (req, res) => {
   }
 };
 
+/* ✅ فحص الطفل عن طريق السجل المدني - للأهالي */
+ const checkChildParent = async (req, res) => {
+  try {
+    // تحويل السجل المدني إلى رقم
+    const id = Number(req.params.idNumber);
+
+    if (isNaN(id)) {
+      return res.status(400).json({
+        exists: false,
+        message: "السجل المدني غير صالح",
+      });
+    }
+
+    const child = await Children.findOne({ idNumber: id })
+      .populate("branch", "branchName")
+      .populate("subscription");
+
+    if (!child) {
+      return res.status(200).json({
+        exists: false,
+        message: "لا يوجد طفل بهذا السجل المدني",
+      });
+    }
+
+    return res.status(200).json({
+      exists: true,
+      status: child.status,
+      child,
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "خطأ في السيرفر",
+      error: error.message,
+    });
+  }
+};
+
+
+
+/* ✅ تسجيل طفل جديد من ولي الأمر */
+const addChildParent = async (req, res) => {
+  try {
+    const {
+      childName,
+      idNumber,
+      dateOfBirth,
+      gender,
+      guardian,
+      branch,
+      shift,
+      subscriptionId,
+    } = req.body;
+
+    // إذا الطفل موجود أصلاً
+    const existing = await Children.findOne({ idNumber });
+    if (existing) {
+      return res.status(400).json({
+        message: "الطفل مسجل مسبقًا، يرجى الانتقال إلى (تجديد الاشتراك).",
+        exists: true,
+        status: existing.status,
+      });
+    }
+
+    if (!childName || !idNumber || !dateOfBirth || !gender) {
+      return res
+        .status(400)
+        .json({ message: "الاسم، الهوية، الميلاد، الجنس مطلوبة" });
+    }
+
+    if (!["بنت", "ولد"].includes(gender)) {
+      return res
+        .status(400)
+        .json({ message: "الجنس يجب أن يكون (بنت) أو (ولد)" });
+    }
+
+    if (!Array.isArray(guardian) || guardian.length < 2) {
+      return res.status(400).json({
+        message: "يجب إدخال بيانات وليي أمر اثنين على الأقل",
+      });
+    }
+
+    const b = await Branch.findById(branch);
+    if (!b) {
+      return res.status(404).json({ message: "الفرع غير موجود" });
+    }
+
+    const child = await Children.create({
+      childName,
+      idNumber,
+      dateOfBirth,
+      gender,
+      guardian,
+      branch,
+      shift,
+      subscription: subscriptionId || undefined,
+      status: "مضاف", // ✅ طلب جديد ينتظر موافقة الإدارة
+    });
+
+    return res.status(201).json({
+      message: "تم استلام طلب تسجيل الطفل بانتظار موافقة الإدارة",
+      child,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "حدث خطأ أثناء الإضافة",
+      error: error.message,
+    });
+  }
+};
+
+/* ✅ تأكيد تجديد الاشتراك بعد (الدفع الشكلي) من قبل ولي الأمر */
+// ⭐ تحديث جديد: تجديد الاشتراك من الوالدين — بدون معلمة + حالة الطفل = مضاف
+// ⭐ تحديث جديد: تجديد الاشتراك من الوالدين — بدون معلمة + child يصبح مضاف
+const renewSubscriptionParent = async (req, res) => {
+  try {
+    const { childId, subscriptionId } = req.body;
+
+    if (!childId || !subscriptionId) {
+      return res.status(400).json({
+        message: "بيانات ناقصة — يجب اختيار الاشتراك"
+      });
+    }
+
+    const child = await Children.findById(childId);
+    if (!child) {
+      return res.status(404).json({ message: "❌ الطفل غير موجود" });
+    }
+
+    // ❗ نفس منطق حالة الطفل
+    if (child.status === "مؤكد") {
+      return res.status(400).json({
+        message: "الطفل لديه اشتراك فعال — لا يمكن التجديد الآن"
+      });
+    }
+
+    if (child.status === "مضاف") {
+      return res.status(400).json({
+        message: "تم تقديم طلب للطفل مسبقًا — بانتظار موافقة الإدارة"
+      });
+    }
+
+    if (child.status !== "غير مفعل") {
+      return res.status(400).json({
+        message: "لا يمكن التجديد لهذه الحالة"
+      });
+    }
+
+    // ⭐ الاشتراك الجديد
+    const subscription = await Subscription.findById(subscriptionId);
+    if (!subscription) {
+      return res.status(404).json({ message: "❌ الاشتراك غير موجود" });
+    }
+
+    // ⭐ تحديث بيانات الطفل — دائماً يصبح مضاف لانتظار الموافقة
+    child.subscription = subscription._id;
+    child.subscriptionStart = new Date();
+    child.subscriptionEnd = subscription.subscriptionEnd;
+
+    // ⭐ تحديث الشفت والفرع حسب الاشتراك
+    if (subscription.branch) child.branch = subscription.branch;
+    if (subscription.shift) child.shift = subscription.shift;
+
+    child.status = "مضاف"; // → يجب موافقة الإدارة
+
+    await child.save();
+
+    // ⭐ إنشاء عملية دفع — بدون addedBy وبدون enum error
+    await Payment.create({
+      amount: subscription.price,
+      child: child._id,
+      subscription: subscription._id,
+      branch: child.branch,
+      shift: child.shift,
+      paymentType: "Apple Pay",
+      addedBy: null,              
+      note: `طلب تجديد اشتراك للطفل: ${child.childName} — بواسطة ولي الأمر`
+    });
+
+    return res.status(200).json({
+      message: "✔ تم استلام طلب التجديد — بانتظار موافقة الإدارة",
+      child,
+    });
+
+  } catch (error) {
+    console.error("renewSubscriptionParent error:", error);
+    res.status(500).json({
+      message: "حدث خطأ أثناء التجديد ❌",
+      error: error.message,
+    });
+  }
+};
+
 
 
 module.exports = {
   addChild,
-  addChildParent,
   confirmChild,
   renewSubscription,
   updateChild,
@@ -1060,4 +1203,7 @@ module.exports = {
   getOneChild,
   confirmManyChildren,
   deleteManyChildren,
+  checkChildParent,
+  addChildParent, 
+  renewSubscriptionParent
 };

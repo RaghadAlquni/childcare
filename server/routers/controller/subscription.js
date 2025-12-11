@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const Subscription = require("../../DB/models/subscriptionSchema.js");
+const Subscription = require("../../DB/models/subscriptionSchema");
 
 // ----------------------------------------------------------
 // Helper: يتحقق إذا المستخدم نفس الفرع والشفت
@@ -20,16 +20,39 @@ const isSameScope = (sub, user) => {
 const addSubscription = async (req, res) => {
   try {
     const user = req.user;
-    const { name, price, ageRange, durationType, description, branch, shift } = req.body;
 
+    const {
+      name,
+      price,
+      ageRange,
+      durationType,
+      description,
+      branch,
+      shift,
+      subscriptionStart,
+      subscriptionEnd,
+      isActive
+    } = req.body;
+
+    // ----------------------------------------------------------
+    // 🔐 التحقق من صلاحيات المستخدم
+    // ----------------------------------------------------------
     if (!["admin", "director", "assistant_director"].includes(user.role)) {
       return res.status(403).json({ message: "🚫 غير مصرح لك بإضافة اشتراك" });
     }
 
+    // ----------------------------------------------------------
+    // 📝 التحقق من الحقول المطلوبة
+    // ----------------------------------------------------------
     if (!name || !price || !ageRange?.from || !ageRange?.to || !durationType) {
-      return res.status(400).json({ message: "❌ جميع الحقول الأساسية مطلوبة" });
+      return res.status(400).json({
+        message: "❌ جميع الحقول الأساسية مطلوبة (الاسم، السعر، الفئة العمرية، المدة)"
+      });
     }
 
+    // ----------------------------------------------------------
+    // 🏢 المدير والمساعدة لا يحددون الفرع والشفت بشكل يدوي
+    // ----------------------------------------------------------
     let finalBranch = branch;
     let finalShift = shift;
 
@@ -38,6 +61,9 @@ const addSubscription = async (req, res) => {
       finalShift = user.shift;
     }
 
+    // ----------------------------------------------------------
+    // 🔍 التحقق من عدم وجود اشتراك بنفس الاسم في نفس الفرع والشفت
+    // ----------------------------------------------------------
     const existing = await Subscription.findOne({
       name,
       branch: finalBranch,
@@ -45,25 +71,46 @@ const addSubscription = async (req, res) => {
     });
 
     if (existing) {
-      return res.status(400).json({ message: "❌ يوجد اشتراك بنفس الاسم في هذا الفرع والشفت" });
+      return res.status(400).json({
+        message: "❌ يوجد اشتراك بنفس الاسم في هذا الفرع والشفت"
+      });
     }
 
+    // ----------------------------------------------------------
+    // 🗂️ إنشاء الاشتراك الجديد
+    // ----------------------------------------------------------
     const newSub = await Subscription.create({
       name,
       price,
       ageRange,
       durationType,
       description,
+      subscriptionStart: subscriptionStart || null,
+      subscriptionEnd: subscriptionEnd || null,
       branch: finalBranch,
       shift: finalShift,
-      createdBy: user._id
+      createdBy: user._id,
+      isActive: isActive ?? true
     });
 
-    res.status(201).json({ message: "✅ تم إنشاء الاشتراك بنجاح", data: newSub });
+    // ----------------------------------------------------------
+    // 🎉 نجاح العملية
+    // ----------------------------------------------------------
+    res.status(201).json({
+      message: "✅ تم إنشاء الاشتراك بنجاح",
+      data: newSub
+    });
+
   } catch (error) {
-    res.status(500).json({ message: "❌ خطأ أثناء إضافة الاشتراك", error: error.message });
+    console.error(error);
+
+    res.status(500).json({
+      message: "❌ خطأ أثناء إضافة الاشتراك",
+      error: error.message
+    });
   }
 };
+
 
 // ----------------------------------------------------------
 // 2️⃣ تعديل اشتراك جزئي
@@ -142,16 +189,21 @@ const getAllSubscriptions = async (req, res) => {
 
     const subs = await Subscription.find(filter)
       .sort({ price: 1 })
-      .populate("branch createdBy", "name email role");
+      .populate("branch", "branchName") // ← الحل هنا
+      .populate("createdBy", "name email role");
 
     res.status(200).json({
       count: subs.length,
       subscriptions: subs
     });
   } catch (error) {
-    res.status(500).json({ message: "❌ خطأ أثناء جلب الاشتراكات", error: error.message });
+    res.status(500).json({
+      message: "❌ خطأ أثناء جلب الاشتراكات",
+      error: error.message,
+    });
   }
 };
+
 
 // ----------------------------------------------------------
 // 5️⃣ عرض اشتراك واحد
@@ -248,6 +300,53 @@ const getMySubscriptions = async (req, res) => {
   }
 };
 
+const toggleSubscriptionStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const sub = await Subscription.findById(id);
+    if (!sub) {
+      return res.status(404).json({ message: "❌ الاشتراك غير موجود" });
+    }
+
+    // Toggle status
+    sub.isActive = !sub.isActive;
+
+    await sub.save();
+
+    return res.status(200).json({
+      message: sub.isActive
+        ? "✅ تم تفعيل الاشتراك بنجاح"
+        : "⚠️ تم تعطيل الاشتراك بنجاح",
+      data: sub
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      message: "❌ خطأ أثناء تغيير حالة الاشتراك",
+      error: error.message
+    });
+  }
+};
+
+const getParentSubscriptions = async (req, res) => {
+  try {
+    const subs = await Subscription.find().sort({ createdAt: -1 });
+
+    res.status(200).json({
+      message: "تم جلب الاشتراكات بنجاح",
+      count: subs.length,
+      data: subs,
+    });
+  } catch (error) {
+    console.error("getAllSubscriptions error", error);
+    res.status(500).json({
+      message: "حدث خطأ أثناء جلب الاشتراكات ❌",
+      error: error.message,
+    });
+  }
+};
+
 
 module.exports = {
   addSubscription,
@@ -258,4 +357,6 @@ module.exports = {
   getSubscriptionsByBranchAndShift,
   getActiveSubscriptionsByBranch,
   getMySubscriptions,
+  toggleSubscriptionStatus,
+  getParentSubscriptions
 };

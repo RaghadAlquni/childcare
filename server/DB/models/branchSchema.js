@@ -5,6 +5,7 @@ const branchSchema = new mongoose.Schema({
   city: { type: String, required: true, trim: true },
   district: { type: String, required: true, trim: true },
   locationLink: { type: String, required: true },
+  branchImg: {type: String,   default: "https://codia-f2c.s3.us-west-1.amazonaws.com/image/2025-12-05/aK9FMXdUq7.png" },
   images: [{ type: String }],
 
   workingHours: [
@@ -34,7 +35,14 @@ const branchSchema = new mongoose.Schema({
       ],
     },
   ],
-directors: [
+
+  status: {
+    type: String,
+    enum: ["نشط", "غير نشط"],
+    default: "نشط"
+  },
+  
+  directors: [
   {
     user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: false },
     shift: { type: String, enum: ["صباح", "مساء"], required: false }

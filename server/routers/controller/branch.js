@@ -3,52 +3,99 @@ const Child = require("../../DB/models/childrenSchema.js")
 const User = require("../../DB/models/userSchema");
 
 // 1️⃣ new Branch
+// ============== ADD BRANCH ==============
 const addBranch = async (req, res) => {
   try {
+    // نطبع اللي جاي من الفورم عشان نتأكد
+    console.log("BODY:", req.body);
+    console.log("FILES:", req.files);
+
     const {
       branchName,
       city,
       district,
       locationLink,
-      images,
-      workingHours,
       contactNumber,
-      ageRange,
+      ageFrom,
+      ageTo,
       services
     } = req.body;
 
-    // ✅ التحقق من الحقول الأساسية فقط
+    // ========== التحقق من الحقول الأساسية ==========
     if (!branchName || !city || !district || !locationLink || !contactNumber) {
-      return res.status(400).json({ message: "❌ يجب تعبئة جميع الحقول الأساسية" });
+      return res.status(400).json({
+        message: "❌ يجب تعبئة جميع الحقول الأساسية"
+      });
     }
 
+    if (!ageFrom || !ageTo) {
+      return res.status(400).json({
+        message: "❌ يجب إدخال الفئة العمرية (من - إلى)"
+      });
+    }
+
+    // ========== معالجة الصور ==========
+    const branchImgFile = req.files?.branchImg?.[0] || null;
+    const galleryFiles = req.files?.images || [];
+
+    const branchImgUrl = branchImgFile
+      ? branchImgFile.location || branchImgFile.path
+      : undefined;
+
+    const galleryUrls = galleryFiles.map((file) => file.location || file.path);
+
+    // ========== معالجة الخدمات ==========
+    let finalServices = [];
+    if (Array.isArray(services)) {
+      finalServices = services;
+    } else if (services) {
+      finalServices = [services];
+    }
+
+    // ========== إنشاء الفرع ==========
     const newBranch = new Branch({
       branchName,
       city,
       district,
       locationLink,
-      images: images || [],
-      workingHours: workingHours || [],
+
+      branchImg: branchImgUrl,
+      images: galleryUrls,
+
+      workingHours: [],
+
       contactNumber,
-      ageRange: ageRange || { from: null, to: null },
-      services: services || [],
-      directors: [], // 👈 نبدأها فاضية
-      assistantDirectors: [],
+
+      ageRange: {
+        from: ageFrom,
+        to: ageTo,
+      },
+
+      services: finalServices,
+
+      status: "نشط",
+
+      // علاقات فارغة بالبداية
+      directors: [],
+      assistant_directors: [],
       teachers: [],
-      assistantTeachers: []
+      assistant_teachers: []
     });
 
+    // ========== حفظ في الداتابيز ==========
     await newBranch.save();
 
-    res.status(201).json({
+    // ========== الاستجابة ==========
+    return res.status(201).json({
       message: "✅ تم إضافة الفرع بنجاح",
-      branch: newBranch
+      branch: newBranch,
     });
+
   } catch (error) {
     console.error("❌ Error adding branch:", error);
-    res.status(500).json({
+    return res.status(500).json({
       message: "حدث خطأ أثناء إضافة الفرع",
-      error: error.message
+      error: error.message,
     });
   }
 };

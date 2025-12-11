@@ -59,50 +59,57 @@ const addClassroomByTeacher = async (req, res) => {
 // 👶 دالة: المعلم يضيف طفل إلى كلاس معين
 const addChildToClassroom = async (req, res) => {
   try {
-    const { classroomId, childId } = req.body;
+    const { classroomId, childrenIds } = req.body;
     const teacher = req.user;
 
-    if (!classroomId || !childId) {
-      return res.status(400).json({ message: "classroomId و childId مطلوبين" });
+    if (!classroomId || !childrenIds || !Array.isArray(childrenIds)) {
+      return res.status(400).json({ message: "classroomId و childrenIds مطلوبين" });
     }
 
-    // جلب الفصل
-    const classroom = await Classroom.findById(classroomId);
-    if (!classroom) return res.status(404).json({ message: "❌ الفصل غير موجود" });
+    // جلب الكلاس الجديد
+    const newClassroom = await Classroom.findById(classroomId);
+    if (!newClassroom)
+      return res.status(404).json({ message: "❌ الفصل غير موجود" });
 
-    // جلب الطفل
-    const child = await Children.findById(childId);
-    if (!child) return res.status(404).json({ message: "❌ الطفل غير موجود" });
+    let addedCount = 0;
 
-    // تأكد أن المعلم يعمل في هذا الفصل
-    const isTeacherOfClass =
-      String(classroom.teacherMain) === String(teacher._id) ||
-      classroom.teacherAssistants.some((id) => String(id) === String(teacher._id));
+    for (const childId of childrenIds) {
+      const child = await Children.findById(childId);
+      if (!child) continue;
 
-    if (!isTeacherOfClass) {
-      return res.status(403).json({ message: "❌ لا يمكنك إضافة طفل لهذا الفصل" });
+      // تأكد أن الطفل تابع لنفس المعلم
+      if (String(child.teacherMain) !== String(teacher._id)) continue;
+
+      // 🟡 1️⃣ — حذف الطفل من **كل الفصول** التي تحتويه
+      await Classroom.updateMany(
+        { children: child._id },
+        { $pull: { children: child._id } }
+      );
+
+      // 🟡 2️⃣ — تحديث بيانات الطفل
+      child.classroom = classroomId;
+      child.status = "مؤكد";
+      await child.save();
+
+      // 🟡 3️⃣ — إضافة الطفل للفصل الجديد إذا غير موجود
+      if (!newClassroom.children.includes(childId)) {
+        newClassroom.children.push(childId);
+        addedCount++;
+      }
     }
 
-    // تحديث الطفل
-    child.classroom = classroomId;
-    child.teacherMain = classroom.teacherMain;
-    child.teacherAssistant = classroom.teacherAssistants;
-    child.status = "مؤكد";
-    await child.save();
+    await newClassroom.save();
 
-    // إضافة الطفل للفصل
-    if (!classroom.children.includes(childId)) {
-      classroom.children.push(childId);
-      await classroom.save();
-    }
-
-    res.status(200).json({
-      message: "✅ تم إضافة الطفل للفصل بنجاح",
-      child,
+    return res.status(200).json({
+      message: `تم نقل ${addedCount} طفل إلى الفصل الجديد بنجاح`,
+      addedCount,
     });
 
   } catch (error) {
-    res.status(500).json({ message: "خطأ أثناء إضافة الطفل", error: error.message });
+    return res.status(500).json({
+      message: "❌ خطأ أثناء نقل الأطفال",
+      error: error.message,
+    });
   }
 };
 
@@ -200,4 +207,89 @@ const addAssistantToClassroom = async (req, res) => {
   }
 };
 
-module.exports = { addClassroomByTeacher, addChildToClassroom, addAssistantToClassroom, moveChildToAnotherClassroom };
+const getTeacherClassrooms = async (req, res) => {
+  try {
+    const teacher = req.user;
+
+    if (!teacher) {
+      return res.status(401).json({ message: "غير مصرح" });
+    }
+
+    if (teacher.role !== "teacher") {
+      return res.status(403).json({ message: "❌ فقط المعلمين يمكنهم رؤية الفصول" });
+    }
+
+    // 🟡 جلب كل الفصول التابعة للمعلم حسب الفرع والشفت
+    const classrooms = await Classroom.find({
+      teacherMain: teacher._id,
+      branch: teacher.branch,
+      shift: teacher.shift,
+    })
+      .populate("children", "fullName")
+      .populate("teacherAssistants", "fullName")
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({
+      message: "تم جلب فصول المعلّم",
+      classrooms,
+    });
+
+  } catch (error) {
+    console.error("Error fetching teacher classrooms:", error);
+    res.status(500).json({
+      message: "حدث خطأ أثناء جلب الفصول ❌",
+      error: error.message,
+    });
+  }
+};
+
+const getOneClassroom = async (req, res) => {
+  try {
+    const classroomId = req.params.id;
+
+    const classroom = await Classroom.findById(classroomId)
+      .populate("children", "childName") // يرجع اسم الأطفال فقط
+      .populate("teacherAssistants", "fullName");
+
+    if (!classroom) {
+      return res.status(404).json({ message: "الفصل غير موجود" });
+    }
+
+    res.status(200).json({
+      message: "تم جلب بيانات الفصل",
+      classroom,
+    });
+
+  } catch (error) {
+    console.error("Error fetching classroom:", error);
+    res.status(500).json({
+      message: "حدث خطأ أثناء جلب بيانات الفصل",
+      error: error.message,
+    });
+  }
+};
+
+const ChildrenWithoutClassrrom = async (req, res) => {
+  try {
+    const teacher = req.user;
+
+    const children = await Children.find({
+      teacherMain: teacher._id,
+      classroom: null, // فقط اللي بدون فصل
+    }).select("childName _id");
+
+    res.status(200).json({
+      message: "تم جلب الأطفال",
+      children,
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      message: "حدث خطأ أثناء جلب الأطفال",
+      error: error.message,
+    });
+  }
+};
+
+
+module.exports = { addClassroomByTeacher, addChildToClassroom, addAssistantToClassroom, moveChildToAnotherClassroom, getTeacherClassrooms, getOneClassroom, ChildrenWithoutClassrrom};

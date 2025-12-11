@@ -6,16 +6,7 @@ const authorize = require("../middleware/authorization.js");
 
 
 const {
-  addChild,
-  addChildParent,
-  confirmChild,
-  updateChild,
-  deleteChild,
-  expireSubscriptions,
-  getChildren,
-  getConfirmedChildren,
-  markAllInactive,
-  getOneChild, renewSubscription, getWaitingChildren, confirmManyChildren, deleteManyChildren} = require("../controller/children.js")
+  addChild, confirmChild, updateChild, deleteChild, expireSubscriptions, getChildren, getConfirmedChildren, markAllInactive, getOneChild, renewSubscription, getWaitingChildren, confirmManyChildren, deleteManyChildren, checkChildParent, addChildParent, renewSubscriptionParent} = require("../controller/children.js")
 
   
 // ✅ إضافة طفل جديد
@@ -27,7 +18,9 @@ childRouter.post("/renewSubscription", authenticate, renewSubscription)
 
 // ✅ إضافة طفل جديد
 // parent = add pending
-childRouter.post("/children/publicAdd" , addChildParent)
+childRouter.get("/parent/check-child/:idNumber", checkChildParent);
+childRouter.post("/parent/add-child", addChildParent);
+childRouter.post("/parent/renew-subscription", renewSubscriptionParent);
 
 
 // ✅ تأكيد طفل بعد إضافته (من الإدارة فقط)

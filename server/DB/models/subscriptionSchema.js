@@ -19,11 +19,23 @@ subscriptionEnd: { type: Date },
     ref: "Branch",
     required: true
   },
+  
+  ageRange: {
+  from: { type: String, required: true },
+  to: { type: String, required: true }
+},
+
   shift: {
     type: String,
     enum: ["صباح", "مساء"],
     required: true
   },
+
+  createdBy: {
+  type: mongoose.Schema.Types.ObjectId,
+  ref: "User",
+  required: false
+}, 
 
   isActive: { type: Boolean, default: true } // حالة التفعيل
 }, { timestamps: true });

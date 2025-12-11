@@ -10,8 +10,9 @@ const {
   deleteSubscription,
   getAllSubscriptions,
   getOneSubscription,
-  getActiveSubscriptionsByBranch,
+  getParentSubscriptions,
   getSubscriptionsByBranchAndShift,
+  toggleSubscriptionStatus,
   getMySubscriptions,
 } = require("../controller/subscription.js");
 
@@ -74,6 +75,12 @@ subscriptionRouter.get(
   authorize(["admin", "director", "assistant_director"]),
   getSubscriptionsByBranchAndShift
 );
+
 subscriptionRouter.get("/mySubscription", authentication, authorize(["director", "assistant_director"]), getMySubscriptions);
+
+subscriptionRouter.put("/toggleSubscriptionStatus/:id", authentication, toggleSubscriptionStatus);
+
+// for Parent
+subscriptionRouter.get("/allSubscription", getParentSubscriptions);
 
 module.exports = subscriptionRouter;

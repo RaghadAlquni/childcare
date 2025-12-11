@@ -31,7 +31,7 @@ const paymentSchema = new mongoose.Schema({
   // نوع الدفع
   paymentType: {
     type: String,
-    enum: ["تسجيل جديد", "تجديد اشتراك", "دفعة مالية"],
+    enum: ["Apple Pay", "POS", "cash", "Tappy", "Tamara"],
     required: true,
   },
 
@@ -58,7 +58,6 @@ const paymentSchema = new mongoose.Schema({
   addedBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
-    required: true,
   }
 });
 

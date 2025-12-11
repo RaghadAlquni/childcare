@@ -3,13 +3,14 @@ const express = require("express")
 const { addBranch, getAllBranches, getBranchById, updateBranch, getBranchDetails, getBranchStats, deleteBranch, getTeachersByBranchAndShift} = require("../controller/branch.js")
 const authenticate = require("../middleware/authentication.js");
 const authorize = require("../middleware/authorization.js");
+const upload = require("../../scripts/upload.js");
 
 
 const branchRouter = express.Router()
 
-branchRouter.post("/newBranch", authenticate, authorize(["admin"]), addBranch)
+branchRouter.post("/newBranch", upload.fields([{ name: "branchImg", maxCount: 1 }, { name: "images", maxCount: 10 }]), authenticate, addBranch);
 
-branchRouter.get("/allBranchs", authenticate, authorize(["admin"]), getAllBranches)
+branchRouter.get("/allBranchs", getAllBranches)
 branchRouter.get("/branch/:id", authenticate, authorize(["admin", "director"]), getBranchById)
 
 branchRouter.put("/branch/:id", authenticate, authorize(["admin", "director", "assistant_director"]), updateBranch)

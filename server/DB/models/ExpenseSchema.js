@@ -1,15 +1,12 @@
-// DB/models/expenseSchema.js
 const mongoose = require("mongoose");
 
 const expenseSchema = new mongoose.Schema(
   {
-    // مبلغ المصروف
     amount: {
       type: Number,
       required: true,
     },
 
-    // تصنيف المصروف
     category: {
       type: String,
       enum: [
@@ -24,13 +21,11 @@ const expenseSchema = new mongoose.Schema(
       default: "أخرى",
     },
 
-    // وصف اختياري
     description: {
       type: String,
       trim: true,
     },
 
-    // الفرع + الفترة (لو له فترة محددة)
     branch: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Branch",
@@ -43,7 +38,6 @@ const expenseSchema = new mongoose.Schema(
       required: true,
     },
 
-    // مسؤول الصرف
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -58,4 +52,5 @@ const expenseSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("Expense", expenseSchema);
+// 👇 أهم خطوة تمنع الخطأ
+module.exports = mongoose.models.Expense || mongoose.model("Expense", expenseSchema);

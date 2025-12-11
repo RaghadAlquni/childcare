@@ -27,7 +27,7 @@ const childrenSchema = new mongoose.Schema({
   status: {
     type: String,
     enum: ["مضاف", "مؤكد", "غير مفعل"],
-    default: "مضاف" // ✅ تصحيح spelling
+    default: "مضاف"
   },
 
   classroom: {
