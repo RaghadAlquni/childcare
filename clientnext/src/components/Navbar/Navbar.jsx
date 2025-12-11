@@ -36,7 +36,7 @@ const Navbar = () => {
         <Link href="/#Servive" className="text-[#292929] hover:text-[#F9B236] transition">
           الخدمات
         </Link>
-        <Link href="/#Brnach" className="text-[#292929] hover:text-[#F9B236] transition">
+        <Link href="/#Branch" className="text-[#292929] hover:text-[#F9B236] transition">
           الفروع
         </Link>
         <Link href="/#Events" className="text-[#292929] hover:text-[#F9B236] transition">
@@ -49,9 +49,6 @@ const Navbar = () => {
 
       {/* Buttons */}
       <div className="hidden md:flex items-center gap-4">
-        <button className="flex items-center gap-2 border border-[#F9B236] text-[#F9B236] bg-white rounded-full py-[8px] px-[20px] font-bold hover:bg-[#FFF8E5] transition">
-          English
-        </button>
         <button className="bg-[#F9B236] text-white rounded-full py-[8px] px-[20px] font-bold hover:opacity-90 transition">
           تواصل معنا
         </button>
