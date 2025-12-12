@@ -67,7 +67,7 @@ const Footer = () => {
                 className="w-5 h-5 md:w-6 md:h-6"
               />
               <span className="text-[#4d4c4c] text-base md:text-lg">
-                0536691319
+                0555555555
               </span>
             </div>
 
@@ -78,7 +78,7 @@ const Footer = () => {
                 className="w-5 h-5 md:w-6 md:h-6"
               />
               <span className="text-[#4d4c4c] text-base md:text-lg">
-                alm3rfh2020@outlook.sa
+                alm3rfh@example.sa
               </span>
             </div>
 

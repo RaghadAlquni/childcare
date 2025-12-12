@@ -11,9 +11,7 @@ const Navbar = () => {
 
   return (
     <header
-      className="bg-white py-3 px-6 md:px-12 shadow-sm flex justify-between items-center w-full"
-      dir="rtl"
-    >
+      className="bg-white py-3 px-6 md:px-12 shadow-sm flex justify-between items-center w-full md:fixed md:top-0 md:left-0 md:right-0 md:z-50" dir="rtl">
       {/* Logo */}
       <div className="flex items-center">
         <Image
@@ -60,52 +58,84 @@ const Navbar = () => {
         onClick={() => setMenuOpen(!menuOpen)}
       >
         <span
-          className={`h-[3px] bg-[#292929] rounded-md transition-transform duration-300 ${
-            menuOpen ? "rotate-45 translate-y-[8px]" : ""
-          }`}
+          className={`h-[3px] bg-[#292929] rounded-md transition-transform duration-300 ${menuOpen ? "rotate-45 translate-y-[8px]" : ""
+            }`}
         ></span>
         <span
-          className={`h-[3px] bg-[#292929] rounded-md transition-opacity duration-300 ${
-            menuOpen ? "opacity-0" : ""
-          }`}
+          className={`h-[3px] bg-[#292929] rounded-md transition-opacity duration-300 ${menuOpen ? "opacity-0" : ""
+            }`}
         ></span>
         <span
-          className={`h-[3px] bg-[#292929] rounded-md transition-transform duration-300 ${
-            menuOpen ? "-rotate-45 -translate-y-[8px]" : ""
-          }`}
+          className={`h-[3px] bg-[#292929] rounded-md transition-transform duration-300 ${menuOpen ? "-rotate-45 -translate-y-[8px]" : ""
+            }`}
         ></span>
       </div>
 
       {/* Mobile Sidebar */}
       <div
-        className={`fixed top-0 right-0 w-[260px] h-full bg-white shadow-2xl flex flex-col items-center pt-24 gap-6 text-[18px] font-bold transition-transform duration-500 ease-in-out z-50 ${
-          menuOpen ? "translate-x-0" : "translate-x-full"
-        }`}
+        className={`fixed top-0 right-0 w-[260px] h-full bg-white shadow-2xl flex flex-col items-center pt-24 gap-6 text-[18px] font-bold transition-transform duration-500 ease-in-out z-50 ${menuOpen ? "translate-x-0" : "translate-x-full"
+          }`}
       >
-        <a href="#" className="text-[#F9B236]" onClick={() => setMenuOpen(false)}>
+        <Link
+          href="/#Home"
+          className="text-[#F9B236] hover:opacity-80 transition"
+          onClick={() => setMenuOpen(false)}
+        >
           الرئيسية
-        </a>
-        <a href="#" className="text-[#292929]" onClick={() => setMenuOpen(false)}>
+        </Link>
+
+        <Link
+          href="/#About"
+          className="text-[#292929] hover:text-[#F9B236] transition"
+          onClick={() => setMenuOpen(false)}
+        >
           من نحن؟
-        </a>
-        <a href="#" className="text-[#292929]" onClick={() => setMenuOpen(false)}>
+        </Link>
+
+        <Link
+          href="/#Servive"
+          className="text-[#292929] hover:text-[#F9B236] transition"
+          onClick={() => setMenuOpen(false)}
+        >
           الخدمات
-        </a>
-        <a href="#" className="text-[#292929]" onClick={() => setMenuOpen(false)}>
+        </Link>
+
+        <Link
+          href="/#Branch"
+          className="text-[#292929] hover:text-[#F9B236] transition"
+          onClick={() => setMenuOpen(false)}
+        >
           الفروع
-        </a>
-        <a href="#" className="text-[#292929]" onClick={() => setMenuOpen(false)}>
+        </Link>
+
+        <Link
+          href="/#Events"
+          className="text-[#292929] hover:text-[#F9B236] transition"
+          onClick={() => setMenuOpen(false)}
+        >
           أخبارنا
-        </a>
-        <a href="#" className="text-[#292929]" onClick={() => setMenuOpen(false)}>
+        </Link>
+
+        <Link
+          href="/career"
+          className="text-[#292929] hover:text-[#F9B236] transition"
+          onClick={() => setMenuOpen(false)}
+        >
           التوظيف
-        </a>
+        </Link>
 
         <div className="mt-6 flex flex-col items-center gap-3">
-          <button className="bg-[#F9B236] text-white rounded-full py-[8px] px-[20px] font-bold">
+          <button
+            className="bg-[#F9B236] text-white rounded-full py-[8px] px-[20px] font-bold"
+            onClick={() => setMenuOpen(false)}
+          >
             تواصل معنا
           </button>
-          <button className="flex items-center gap-2 border border-[#F9B236] text-[#F9B236] bg-white rounded-full py-[8px] px-[20px] font-bold hover:bg-[#FFF8E5] transition">
+
+          <button
+            className="flex items-center gap-2 border border-[#F9B236] text-[#F9B236] bg-white rounded-full py-[8px] px-[20px] font-bold hover:bg-[#FFF8E5] transition"
+            onClick={() => setMenuOpen(false)}
+          >
             English
           </button>
         </div>

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import ParentChildPopup from "@/components/PopUps/AddChild"; 
+import Link from "next/link";
 
 const Home = () => {
   const [openPopup, setOpenPopup] = useState(false);
@@ -15,7 +16,7 @@ const Home = () => {
   return (
     <section
       id="Home"
-      className="main-container flex flex-col-reverse lg:flex-row justify-center items-center w-full max-w-[1440px] min-h-screen px-6 md:px-16 mx-auto relative overflow-x-hidden pt-10 lg:pt-0"
+      className="main-container flex flex-col-reverse lg:flex-row justify-center items-center w-full max-w-[1440px] min-h-screen px-6 md:px-16 mx-auto relative overflow-x-hidden pt-10 lg:pt-30"
     >
       {/* 🩵 النصوص */}
       <div className="flex flex-col items-start text-right gap-6 w-full lg:w-[600px] z-[2] mt-10 lg:mt-0">
@@ -43,9 +44,9 @@ const Home = () => {
           </button>
 
           {/* إذا تبين يكون زر ثاني غير هذا، عدلّيه لاحقًا */}
-          <button className="px-6 py-2 rounded-[99px] bg-[#f9b236] text-white text-[16px] md:text-[18px] hover:bg-[#e1a42e] transition font-bold">
+          <Link href="/#About" className="px-6 py-2 rounded-[99px] bg-[#f9b236] text-white text-[16px] md:text-[18px] hover:bg-[#e1a42e] transition font-bold">
             قراءة المزيد
-          </button>
+          </Link>
         </div>
 
         <div className="flex items-center justify-end gap-3 mt-4">

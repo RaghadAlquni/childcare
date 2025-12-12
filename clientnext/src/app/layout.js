@@ -6,6 +6,9 @@ import { Toaster } from "react-hot-toast";
 export const metadata = {
   title: "واحة المعرفة",
   description: "مركز واحة المعرفة لضيافة الأطفال",
+  icons: {
+    icon: "/wmLogo.png",
+  },
 };
 
 export default function RootLayout({ children }) {
