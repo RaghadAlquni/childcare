@@ -69,7 +69,7 @@ const Reviews = () => {
           >
 
             <p className="text-[20px] md:text-[22px] text-black leading-8 font-medium">
-              "{current.text}"
+              {current.text}
             </p>
 
             <div className="flex items-center justify-between mt-4">

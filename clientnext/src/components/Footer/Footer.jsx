@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import Link from "next/link";
+import Image from "next/image"; 
 import { FaTiktok, FaWhatsapp, FaInstagram, FaSnapchatGhost } from "react-icons/fa";
 
 const Footer = () => {
@@ -25,9 +26,11 @@ const Footer = () => {
           {/* 🟢 العمود 1 — الصورة + النص */}
           <div className="flex flex-col lg:flex-row lg:items-start gap-5 text-right w-full overflow-x-hidden">
 
-            <img
+            <Image
               src="https://codia-f2c.s3.us-west-1.amazonaws.com/image/2025-11-10/B3awCHTEvF.png"
               alt="شعار واحة المعرفة"
+              width={120}
+              height={120}
               className="w-[100px] h-[100px] md:w-[120px] md:h-[120px] object-contain shrink-0"
             />
 
@@ -61,9 +64,11 @@ const Footer = () => {
             </h3>
 
             <div className="flex items-center gap-3 mb-2">
-              <img
+              <Image
                 src="https://codia-f2c.s3.us-west-1.amazonaws.com/image/2025-11-10/Z5fbKWyGWZ.png"
-                alt="phone"
+                alt="رقم الجوال"
+                width={24}
+                height={24}
                 className="w-5 h-5 md:w-6 md:h-6"
               />
               <span className="text-[#4d4c4c] text-base md:text-lg">
@@ -72,9 +77,11 @@ const Footer = () => {
             </div>
 
             <div className="flex items-center gap-3">
-              <img
+              <Image
                 src="https://codia-f2c.s3.us-west-1.amazonaws.com/image/2025-11-10/sZUuwp0GTm.png"
-                alt="email"
+                alt="البريد الإلكتروني"
+                width={24}
+                height={24}
                 className="w-5 h-5 md:w-6 md:h-6"
               />
               <span className="text-[#4d4c4c] text-base md:text-lg">

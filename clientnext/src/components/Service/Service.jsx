@@ -77,13 +77,9 @@ const Service = () => {
           🔗
         </Link>
 
-        <img
-          src={card.heart}
-          className="
-            absolute left-3 bottom-[-70px] z-10 
-            w-[95px] opacity-0 translate-y-3
-            transition-all duration-500 group-hover:opacity-100 group-hover:translate-y-0"
-        />
+        <Image
+          src={card.heart}   alt="heart" width={95} height={95}
+          className="absolute left-3 bottom-[-70px] z-10 w-[95px] opacity-0 translate-y-3 transition-all duration-500 group-hover:opacity-100 group-hover:translate-y-0"/>
 
         <div
           className="h-[300px] w-full rounded-[20px] bg-cover bg-no-repeat transition-all duration-500 group-hover:scale-[1.01]"
