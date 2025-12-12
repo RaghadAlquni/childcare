@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import ParentChildPopup from "@/components/PopUps/AddChild"; 
 import Link from "next/link";
+import { useState } from "react";
 
 const Home = () => {
   const [openPopup, setOpenPopup] = useState(false);
@@ -38,7 +38,6 @@ const Home = () => {
             تسجيل طفل
           </button>
 
-          {/* إذا تبين يكون زر ثاني غير هذا، عدلّيه لاحقًا */}
           <Link href="/#About" className="px-6 py-2 rounded-[99px] bg-[#f9b236] text-white text-[16px] md:text-[18px] hover:bg-[#e1a42e] transition font-bold">
             قراءة المزيد
           </Link>
@@ -71,38 +70,36 @@ const Home = () => {
       </div>
 
       {/* الصورة المتحركة */}
-      {isClient && (
+      <motion.div
+        className="
+          relative flex justify-center items-center
+          w-full
+          md:w-[70%]
+          md:-translate-y-5
+          md:translate-x-[10px]
+          lg:w-[45%]
+          overflow-visible
+        "
+        initial={{ opacity: 0, scale: 0.9, y: 30 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ duration: 1, ease: "easeOut" }}
+      >
+        {/* الخلفية */}
         <motion.div
-          className="
-            relative flex justify-center items-center
-            w-full
-            md:w-[70%]
-            md:-translate-y-5
-            md:translate-x-[10px]
-            lg:w-[45%]
-            overflow-visible
-          "
-          initial={{ opacity: 0, scale: 0.9, y: 30 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          transition={{ duration: 1, ease: "easeOut" }}
-        >
-          {/* الخلفية */}
-          <motion.div
-            className="absolute w-[380px] h-[380px] sm:w-[440px] sm:h-[440px] md:w-[500px] md:h-[500px] lg:w-[600px] lg:h-[600px] bg-[url('https://codia-f2c.s3.us-west-1.amazonaws.com/image/2025-11-02/8R7RgwGLn8.png')] bg-contain bg-no-repeat"
-            animate={{ scale: [1, 1.05, 1], rotate: [0, 1, -1, 0] }}
-            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-          />
+          className="absolute w-[380px] h-[380px] sm:w-[440px] sm:h-[440px] md:w-[500px] md:h-[500px] lg:w-[600px] lg:h-[600px] bg-[url('https://codia-f2c.s3.us-west-1.amazonaws.com/image/2025-11-02/8R7RgwGLn8.png')] bg-contain bg-no-repeat"
+          animate={{ scale: [1, 1.05, 1], rotate: [0, 1, -1, 0] }}
+          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+        />
 
-          {/* صورة الطفل */}
-          <motion.div
-            className="relative z-[1] w-[320px] h-[320px] sm:w-[380px] sm:h-[380px] md:w-[440px] md:h-[440px] lg:w-[500px] lg:h-[500px] bg-[url('https://codia-f2c.s3.us-west-1.amazonaws.com/image/2025-11-02/EpDerqs3cc.png')] bg-contain bg-no-repeat"
-            animate={{ y: [0, -10, 0] }}
-            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-          />
-        </motion.div>
-      )}
+        {/* صورة الطفل */}
+        <motion.div
+          className="relative z-[1] w-[320px] h-[320px] sm:w-[380px] sm:h-[380px] md:w-[440px] md:h-[440px] lg:w-[500px] lg:h-[500px] bg-[url('https://codia-f2c.s3.us-west-1.amazonaws.com/image/2025-11-02/EpDerqs3cc.png')] bg-contain bg-no-repeat"
+          animate={{ y: [0, -10, 0] }}
+          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+        />
+      </motion.div>
 
-      {/* Popup لولي الأمر */}
+      {/* Popup */}
       <ParentChildPopup open={openPopup} setOpen={setOpenPopup} />
     </section>
   );
