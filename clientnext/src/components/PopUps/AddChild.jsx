@@ -4,8 +4,6 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 
-const API_BASE = "http://localhost:5000";
-
 /* --------------------------------------------------------- */
 /* SweetAlert */
 const showAlert = (options) =>
@@ -77,8 +75,8 @@ export default function AddChildPopup({ open, setOpen }) {
     if (!open) return;
     (async () => {
       try {
-        const b = await axios.get(`${API_BASE}/allBranchs`);
-        const s = await axios.get(`${API_BASE}/allSubscription`);
+        const b = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/allBranchs`);
+        const s = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/allSubscription`);
         setBranches(b.data.data || []);
         setSubs(s.data.data || []);
       } catch {
@@ -145,7 +143,7 @@ function NewForm({ branches, subs, setOpen }) {
   const checkChild = async (id) => {
     if (id.length !== 10) return;
     try {
-      const r = await axios.get(`${API_BASE}/children/${id}`);
+      const r = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/children/${id}`);
       const c = r.data.child;
 
       if (!c) return setStatus("new");
@@ -205,7 +203,7 @@ function NewForm({ branches, subs, setOpen }) {
       return alertMsg("العمر يجب أن يكون بين 2 و 12.");
 
     try {
-      await axios.post(`${API_BASE}/parent/add-child`, data);
+      await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/parent/add-child`, data);
       await showAlert({
         icon: "success",
         title: "تم التسجيل",
@@ -292,7 +290,7 @@ function RenewForm({ subs, setOpen }) {
     if (id.length !== 10) return;
 
     try {
-      const r = await axios.get(`${API_BASE}/parent/check-child/${id}`);
+      const r = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/parent/check-child/${id}`);
       const { exists, status, child } = r.data;
 
       if (!exists)
@@ -333,7 +331,7 @@ function RenewForm({ subs, setOpen }) {
       });
 
     try {
-      await axios.post(`${API_BASE}/parent/renew-subscription`, {
+      await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/parent/renew-subscription`, {
         childId,
         subscriptionId: selected,
       });

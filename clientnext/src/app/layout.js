@@ -4,7 +4,7 @@ import Footer from "../components/Footer/Footer";
 import { Toaster } from "react-hot-toast";
 
 export const metadata = {
-  title: "واحة المعرفة",
+  title: "مركز واحة المعرفة لضيافة الأطفال",
   description: "مركز واحة المعرفة لضيافة الأطفال",
   icons: {
     icon: "/wmLogo.png",
