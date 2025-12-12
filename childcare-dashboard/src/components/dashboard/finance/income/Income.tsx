@@ -57,7 +57,7 @@ const PaymentsPage: React.FC = () => {
     try {
       const token = localStorage.getItem("token");
 
-      const res = await axios.get("http://localhost:5000/allBranchs", {
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/allBranchs`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -76,7 +76,7 @@ const PaymentsPage: React.FC = () => {
       const token = localStorage.getItem("token");
 
       const res = await axios.get(
-        `http://localhost:5000/allIncoming?page=${page}&limit=${limit}&branch=${selectedBranch}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/allIncoming?page=${page}&limit=${limit}&branch=${selectedBranch}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -138,7 +138,7 @@ const PaymentsPage: React.FC = () => {
       const token = localStorage.getItem("token");
 
       await axios.post(
-        "http://localhost:5000/deletePayments",
+        `${process.env.NEXT_PUBLIC_API_URL}/deletePayments`,
         { ids: selectedPayments },
         { headers: { Authorization: `Bearer ${token}` } }
       );

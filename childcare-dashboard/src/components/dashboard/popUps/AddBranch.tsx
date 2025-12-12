@@ -106,7 +106,7 @@ export default function AddBranchPopup({ open, onClose, onAdded }: AddBranchPopu
   galleryImages.forEach((img) => form.append("images", img));
 
   try {
-    await axios.post("http://localhost:5000/newBranch", form, {
+    await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/newBranch`, form, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "multipart/form-data",

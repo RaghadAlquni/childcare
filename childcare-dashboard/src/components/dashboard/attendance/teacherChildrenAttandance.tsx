@@ -45,7 +45,7 @@ export default function AttendancePage() {
       try {
         const token = localStorage.getItem("token");
 
-        const res = await axios.get("http://localhost:5000/teacherClassrooms", {
+        const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/teacherClassrooms`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -69,7 +69,7 @@ export default function AttendancePage() {
         setLoadingChildren(true);
         const token = localStorage.getItem("token");
 
-        const res = await axios.get("http://localhost:5000/dailyChildrenAttendance", {
+        const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/dailyChildrenAttendance`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -118,7 +118,7 @@ export default function AttendancePage() {
         const year = new Date().getFullYear();
 
         const res = await axios.get(
-          `http://localhost:5000/teacherChildrenAttendance?month=${month}&year=${year}`,
+          `${process.env.NEXT_PUBLIC_API_URL}/teacherChildrenAttendance?month=${month}&year=${year}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
 
@@ -179,7 +179,7 @@ export default function AttendancePage() {
       const token = localStorage.getItem("token");
 
       await axios.post(
-        "http://localhost:5000/childCheckIn",
+        `${process.env.NEXT_PUBLIC_API_URL}/childCheckIn`,
         { childIds: selectedChildren },
         { headers: { Authorization: `Bearer ${token}` } }
       );

@@ -28,7 +28,7 @@ export default function SubscriptionsPage() {
     try {
       const token = localStorage.getItem("token");
 
-      const res = await axios.get("http://localhost:5000/subscription/all", {
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/subscription/all`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -52,7 +52,7 @@ export default function SubscriptionsPage() {
       const token = localStorage.getItem("token");
 
       const res = await axios.put(
-        `http://localhost:5000/toggleSubscriptionStatus/${id}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/toggleSubscriptionStatus/${id}`,
         {},
         {
           headers: { Authorization: `Bearer ${token}` },

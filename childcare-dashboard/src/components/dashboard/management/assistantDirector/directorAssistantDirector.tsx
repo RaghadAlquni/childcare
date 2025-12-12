@@ -33,7 +33,7 @@ const AdminAssistantDirector = () => {
     try {
       console.log("🔵 TOKEN BEFORE REQUEST:", token);
 
-      const res = await axios.get("http://localhost:5000/assistantDirectors", {
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/assistantDirectors`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

@@ -35,7 +35,7 @@ const adminDirector = () => {
    const getAllDirectors = async () => {
     try {
     console.log("🔴 TOKEN BEFORE REQUEST:", token);
-      const res = await axios.get("http://localhost:5000/directors", {
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/directors`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

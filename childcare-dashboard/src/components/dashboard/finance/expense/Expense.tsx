@@ -54,7 +54,7 @@ const ExpensesPage: React.FC = () => {
     try {
       const token = localStorage.getItem("token");
 
-      const res = await axios.get("http://localhost:5000/allBranchs", {
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/allBranchs`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -73,7 +73,7 @@ const ExpensesPage: React.FC = () => {
       const token = localStorage.getItem("token");
 
       const res = await axios.get(
-        `http://localhost:5000/allExpenses?page=${page}&limit=${limit}&branch=${selectedBranch}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/allExpenses?page=${page}&limit=${limit}&branch=${selectedBranch}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
@@ -133,7 +133,7 @@ const ExpensesPage: React.FC = () => {
     const token = localStorage.getItem("token");
 
     const res = await axios.post(
-      "http://localhost:5000/deleteExpenses",
+      `${process.env.NEXT_PUBLIC_API_URL}/deleteExpenses`,
       { ids: selectedExpenses },
       { headers: { Authorization: `Bearer ${token}` } }
     );

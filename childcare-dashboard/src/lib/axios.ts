@@ -4,7 +4,7 @@ import { store } from "@/redux/store";
 
 
 export const api = axios.create({
-  baseURL: "http://localhost:5000",
+  baseURL: "https://childcare-4muz.onrender.com",
 });
 
 /* 🔵 Request Interceptor — يضيف التوكن لكل طلب */

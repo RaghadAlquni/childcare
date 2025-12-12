@@ -36,7 +36,7 @@ export default function AdminHome() {
     const fetchData = async () => {
       const token = localStorage.getItem("token");
 
-      const res = await fetch("http://localhost:5000/dashboardState", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/dashboardState`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 

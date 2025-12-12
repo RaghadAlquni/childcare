@@ -32,7 +32,7 @@ const DirectorTeachers = () => {
   const fetchTeachers = async () => {
     try {
       const res = await axios.get(
-        "http://localhost:5000/managedTeachers/all",
+        `${process.env.NEXT_PUBLIC_API_URL}/managedTeachers/all`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }

@@ -95,7 +95,7 @@ export default function AttendancePage() {
   const fetchBranches = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get("http://localhost:5000/allBranchs", {
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/allBranchs`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -112,8 +112,8 @@ export default function AttendancePage() {
 
       const url =
         selectedBranch && selectedShift
-          ? `http://localhost:5000/employeesAttendance?branch=${selectedBranch}&shift=${selectedShift}&date=${today}`
-          : `http://localhost:5000/employeesAttendance?date=${today}`;
+          ? `${process.env.NEXT_PUBLIC_API_URL}/employeesAttendance?branch=${selectedBranch}&shift=${selectedShift}&date=${today}`
+          : `${process.env.NEXT_PUBLIC_API_URL}/employeesAttendance?date=${today}`;
 
       const res = await axios.get(url, {
         headers: { Authorization: `Bearer ${token}` },
@@ -132,8 +132,8 @@ export default function AttendancePage() {
 
       const url =
         selectedBranch && selectedShift
-          ? `http://localhost:5000/MunthlyEmployeesAttendance?branch=${selectedBranch}&shift=${selectedShift}&month=${currentMonth}&year=${currentYear}`
-          : `http://localhost:5000/MunthlyEmployeesAttendance?month=${currentMonth}&year=${currentYear}`;
+          ? `${process.env.NEXT_PUBLIC_API_URL}/MunthlyEmployeesAttendance?branch=${selectedBranch}&shift=${selectedShift}&month=${currentMonth}&year=${currentYear}`
+          : `${process.env.NEXT_PUBLIC_API_URL}/MunthlyEmployeesAttendance?month=${currentMonth}&year=${currentYear}`;
 
       const res = await axios.get(url, {
         headers: { Authorization: `Bearer ${token}` },

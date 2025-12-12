@@ -89,7 +89,7 @@ const AddPaymentModal: React.FC<AddPaymentModalProps> = ({
       const token = localStorage.getItem("token");
 
       await axios.post(
-        "http://localhost:5000/createPayment",
+        `${process.env.NEXT_PUBLIC_API_URL}/createPayment`,
         {
           branch: form.branch,
           shift: form.shift,

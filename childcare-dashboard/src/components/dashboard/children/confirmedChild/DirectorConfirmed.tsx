@@ -36,7 +36,7 @@ export default function DirectorConfirmed() {
       try {
         const token = localStorage.getItem("token");
 
-        const res = await fetch("http://localhost:5000/confirmedChildren", {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/confirmedChildren`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 

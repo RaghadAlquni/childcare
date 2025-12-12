@@ -75,7 +75,7 @@ export default function DirectorAttendancePage() {
       const token = localStorage.getItem("token");
 
       const res = await axios.get(
-        `http://localhost:5000/director/attendance/daily?date=${today}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/director/attendance/daily?date=${today}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -100,7 +100,7 @@ export default function DirectorAttendancePage() {
       const token = localStorage.getItem("token");
 
       const res = await axios.get(
-        `http://localhost:5000/director/attendance/monthly?month=${currentMonth}&year=${currentYear}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/director/attendance/monthly?month=${currentMonth}&year=${currentYear}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }

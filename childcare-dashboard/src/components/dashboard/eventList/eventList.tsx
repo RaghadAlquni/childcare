@@ -45,7 +45,7 @@ export default function EventsSidebar() {
   useEffect(() => {
     const getEvents = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/eventsAndNews");
+        const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/eventsAndNews`);
 
         const today = new Date();
         today.setHours(0, 0, 0, 0);

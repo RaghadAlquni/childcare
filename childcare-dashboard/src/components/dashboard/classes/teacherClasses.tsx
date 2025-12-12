@@ -28,7 +28,7 @@ const TeacherClassrooms = () => {
     try {
       const token = localStorage.getItem("token");
 
-      const res = await axios.get("http://localhost:5000/TeacherClassrooms", {
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/TeacherClassrooms`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -53,7 +53,7 @@ const TeacherClassrooms = () => {
     try {
       const token = localStorage.getItem("token");
 
-      const res = await axios.get(`http://localhost:5000/classrooms/${id}`, {
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/classrooms/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -90,7 +90,7 @@ const TeacherClassrooms = () => {
         const token = localStorage.getItem("token");
 
         await axios.post(
-          "http://localhost:5000/addClassroom",
+          `${process.env.NEXT_PUBLIC_API_URL}/addClassroom`,
           { className: result.value.trim() },
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -119,7 +119,7 @@ const TeacherClassrooms = () => {
         const token = localStorage.getItem("token");
 
         await axios.delete(
-          `http://localhost:5000/deleteClassroom/${id}`,
+          `${process.env.NEXT_PUBLIC_API_URL}/deleteClassroom/${id}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
 
@@ -141,7 +141,7 @@ const TeacherClassrooms = () => {
       const token = localStorage.getItem("token");
 
       await axios.post(
-        `http://localhost:5000/addChildClassroom`,
+        `${process.env.NEXT_PUBLIC_API_URL}/addChildClassroom`,
         { classroomId, childrenIds },
         { headers: { Authorization: `Bearer ${token}` } }
       );

@@ -31,7 +31,7 @@ export default function Calendar() {
   /* ========== جلب الأحداث ========== */
   const fetchEvents = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/eventsAndNews");
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/eventsAndNews`);
       let data = res.data;
 
       if (data && Array.isArray(data.events)) data = data.events;
@@ -85,7 +85,7 @@ export default function Calendar() {
 
       if (editingId) {
         await axios.put(
-          `http://localhost:5000/eventEdit/${editingId}`,
+          `${process.env.NEXT_PUBLIC_API_URL}/eventEdit/${editingId}`,
           formData,
           {
             headers: {
@@ -97,7 +97,7 @@ export default function Calendar() {
 
         alert("تم تعديل الحدث بنجاح");
       } else {
-        await axios.post("http://localhost:5000/createEvent", formData, {
+        await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/createEvent`, formData, {
           headers: {
             "Content-Type": "multipart/form-data",
             Authorization: `Bearer ${token}`,

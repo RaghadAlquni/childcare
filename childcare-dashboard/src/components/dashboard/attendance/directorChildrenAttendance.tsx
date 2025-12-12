@@ -41,7 +41,7 @@ export default function DirectorChildrenAttendancePage() {
   const fetchTeachers = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get("http://localhost:5000/managedTeachers", {
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/managedTeachers`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -65,8 +65,8 @@ export default function DirectorChildrenAttendancePage() {
 
       const url =
         selectedTeacher === "all"
-          ? `http://localhost:5000/director/children-attendance/daily?date=${today}`
-          : `http://localhost:5000/director/children-attendance/daily?date=${today}&teacherId=${selectedTeacher}`;
+          ? `${process.env.NEXT_PUBLIC_API_URL}/director/children-attendance/daily?date=${today}`
+          : `${process.env.NEXT_PUBLIC_API_URL}/director/children-attendance/daily?date=${today}&teacherId=${selectedTeacher}`;
 
       const res = await axios.get(url, {
         headers: { Authorization: `Bearer ${token}` },
@@ -87,8 +87,8 @@ export default function DirectorChildrenAttendancePage() {
 
       const url =
         selectedTeacher === "all"
-          ? `http://localhost:5000/director/children-attendance/monthly?month=${month}&year=${year}`
-          : `http://localhost:5000/director/children-attendance/monthly?month=${month}&year=${year}&teacherId=${selectedTeacher}`;
+          ? `${process.env.NEXT_PUBLIC_API_URL}/director/children-attendance/monthly?month=${month}&year=${year}`
+          : `${process.env.NEXT_PUBLIC_API_URL}/director/children-attendance/monthly?month=${month}&year=${year}&teacherId=${selectedTeacher}`;
 
       const res = await axios.get(url, {
         headers: { Authorization: `Bearer ${token}` },

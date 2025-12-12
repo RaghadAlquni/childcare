@@ -55,7 +55,7 @@ export default function AddSubscriptionPopup({
     try {
       const token = localStorage.getItem("token");
 
-      const res = await axios.get("http://localhost:5000/allBranchs", {
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/allBranchs`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -135,7 +135,7 @@ export default function AddSubscriptionPopup({
         isActive: form.isActive,
       };
 
-      await axios.post("http://localhost:5000/subscription/add", payload, {
+      await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/subscription/add`, payload, {
         headers: { Authorization: `Bearer ${token}` },
       });
 

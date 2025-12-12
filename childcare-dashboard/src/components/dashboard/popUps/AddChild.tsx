@@ -25,8 +25,6 @@ interface Subscription {
   price: number;
 }
 
-const API_BASE = "http://localhost:5000";
-
 /* --------------------------------------------------------- */
 /* 🔔 SweetAlert */
 const showAlert = (options: any) => {
@@ -113,7 +111,7 @@ const AddChildPopup: React.FC<AddChildPopupProps> = ({ open, setOpen }) => {
     if (!open) return;
     const load = async () => {
       const token = localStorage.getItem("token");
-      const res = await axios.get(`${API_BASE}/managedTeachers`, {
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/managedTeachers`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setTeachers(res.data.teachers || []);
@@ -126,7 +124,7 @@ const AddChildPopup: React.FC<AddChildPopupProps> = ({ open, setOpen }) => {
     if (!open) return;
     const load = async () => {
       const token = localStorage.getItem("token");
-      const res = await axios.get(`${API_BASE}/mySubscription`, {
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/mySubscription`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setSubscriptions(res.data.subscriptions || []);
@@ -206,7 +204,7 @@ const NewChildForm = ({ teachers, subscriptions }: any) => {
     if (!civilId) return;
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get(`${API_BASE}/children/${civilId}`, {
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/children/${civilId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -307,7 +305,7 @@ const NewChildForm = ({ teachers, subscriptions }: any) => {
     };
 
     const token = localStorage.getItem("token");
-    await axios.post(`${API_BASE}/children/add`, data, {
+    await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/children/add`, data, {
       headers: { Authorization: `Bearer ${token}` },
     });
 
@@ -381,7 +379,7 @@ const RenewForm = ({ teachers, subscriptions }: any) => {
     if (!civilId) return;
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get(`${API_BASE}/children/${civilId}`, {
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/children/${civilId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setChildInfo(res.data.child);
@@ -444,7 +442,7 @@ const RenewForm = ({ teachers, subscriptions }: any) => {
     };
 
     const token = localStorage.getItem("token");
-    await axios.post(`${API_BASE}/renewSubscription`, data, {
+    await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/renewSubscription`, data, {
       headers: { Authorization: `Bearer ${token}` },
     });
 

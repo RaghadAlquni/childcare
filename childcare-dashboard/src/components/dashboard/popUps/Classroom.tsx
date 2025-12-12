@@ -45,7 +45,7 @@ const ClassroomPopup: React.FC<PopupProps> = ({
       const token = localStorage.getItem("token");
 
       const res = await axios.get(
-        "http://localhost:5000/ChildrenWhithoutClasses",
+        `${process.env.NEXT_PUBLIC_API_URL}/ChildrenWhithoutClasses`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
 

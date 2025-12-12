@@ -214,7 +214,7 @@ const Sidebar = ({ role }: { role: string }) => {
         const token = localStorage.getItem("token");
 
         const res = await axios.post(
-          "http://localhost:5000/employee/check-in",
+          `${process.env.NEXT_PUBLIC_API_URL}/employee/check-in`,
           {},
           { headers: { Authorization: `Bearer ${token}` } }
         );

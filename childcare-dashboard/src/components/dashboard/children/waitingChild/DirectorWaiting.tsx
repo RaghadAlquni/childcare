@@ -62,7 +62,7 @@ const filteredChildren = children.filter((child) => {
     try {
       setLoading(true);
 
-      const res = await axios.get("http://localhost:5000/waitingChildren", {
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/waitingChildren`, {
         params: {
           branch: user?.branch,
           shift: user?.shift,
@@ -94,7 +94,7 @@ const filteredChildren = children.filter((child) => {
   const getTeachers = async () => {
     try {
       const res = await axios.get(
-        "http://localhost:5000/managedTeachers",
+        `${process.env.NEXT_PUBLIC_API_URL}/managedTeachers`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -137,7 +137,7 @@ const filteredChildren = children.filter((child) => {
   const confirmMany = async () => {
     try {
       await axios.put(
-        "http://localhost:5000/confirmMany",
+        `${process.env.NEXT_PUBLIC_API_URL}/confirmMany`,
         {
           ids: selected,
           teacherMain: selectedTeacher,
@@ -171,7 +171,7 @@ const filteredChildren = children.filter((child) => {
   // ================================
   const deleteMany = async () => {
     try {
-      await axios.delete("http://localhost:5000/deleteMany", {
+      await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/deleteMany`, {
         data: { ids: selected },
         headers: { Authorization: `Bearer ${token}` },
       });

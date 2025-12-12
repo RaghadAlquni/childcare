@@ -74,7 +74,7 @@ const AddExpenseModal: React.FC<AddExpenseModalProps> = ({
       const token = localStorage.getItem("token");
 
       await axios.post(
-        "http://localhost:5000/createExpenses",
+        `${process.env.NEXT_PUBLIC_API_URL}/createExpenses`,
         {
           ...form,
           amount: Number(form.amount),
