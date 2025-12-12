@@ -7,11 +7,6 @@ import Link from "next/link";
 
 const Home = () => {
   const [openPopup, setOpenPopup] = useState(false);
-  const [isClient, setIsClient] = useState(false);
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
 
   return (
     <section
