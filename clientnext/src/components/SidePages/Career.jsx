@@ -85,9 +85,10 @@ toast.success("تم إرسال الطلب بنجاح ✨", {
 
   return (
     <div
-      dir="rtl"
-      className="w-full flex flex-col lg:flex-row items-start justify-between gap-10 px-4 md:px-10 py-10"
-    >
+  dir="rtl"
+  className="w-full flex flex-col lg:flex-row items-start justify-between gap-10 px-4 md:px-10 py-10 pt-[180px]"
+>
+
       {/* ====== العنوان ====== */}
       <div className="w-full lg:w-[35%] flex flex-col gap-4 lg:mt-50 text-right">
         <h1 className="text-[38px] md:text-[44px] font-bold text-[#282828] leading-tight">
@@ -100,17 +101,8 @@ toast.success("تم إرسال الطلب بنجاح ✨", {
       </div>
 
       {/* ====== الفورم داخل خلفية ====== */}
-      <div
-        className="
-          w-full lg:w-[60%]
-          bg-white
-          rounded-[20px]
-          p-5 md:p-8
-          shadow-sm
-          border border-[#eeeeee]
-        "
-      >
-<div className="flex flex-col gap-6">
+      <div className="w-full lg:w-[60%] bg-white rounded-[20px] p-5 md:p-8 shadow-sm border border-[#eeeeee]">
+        <div className="flex flex-col gap-6">
 
   {/* ---------------- الصف الأول (الاسم + رقم الجوال) ---------------- */}
   <div className="flex flex-col md:flex-row gap-5">
