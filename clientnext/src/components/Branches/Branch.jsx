@@ -15,7 +15,10 @@ const Branch = () => {
       const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/activeBranchs`);
       const branchData = res.data.data;
 
-      const formatted = branchData.map((b) => ({
+      // 🔥 التعديل الوحيد هنا — تجاهل غير النشط
+      const activeBranches = branchData.filter((b) => b.status === "نشط");
+
+      const formatted = activeBranches.map((b) => ({
         branchName: b.branchName,
         city: b.city,
         district: b.district,
@@ -121,7 +124,5 @@ const Branch = () => {
     </section>
   );
 };
-
-
 
 export default Branch;
