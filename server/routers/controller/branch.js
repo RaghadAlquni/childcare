@@ -310,7 +310,32 @@ const getTeachersByBranchAndShift = async (req, res) => {
   }
 };
 
+const getAllActiveBranches = async (req, res) => {
+  try {
+    const branches = await Branch.find({ status: "نشط" }) 
+      .populate({
+        path: "directors.user",
+        select: "fullName email shift role"
+      })
+      .populate("assistant_directors", "fullName email role shift")
+      .populate("teachers", "fullName email role shift")
+      .populate("assistant_teachers", "fullName email role shift")
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({
+      message: "✅ تم جلب الفروع النشطة فقط",
+      count: branches.length,
+      data: branches,
+    });
+  } catch (error) {
+    console.error("❌ Error fetching branches:", error);
+    res.status(500).json({
+      message: "حدث خطأ أثناء جلب الفروع ❌",
+      error: error.message,
+    });
+  }
+};
 
 module.exports = {
-    addBranch, getAllBranches, getBranchById, updateBranch, getBranchDetails, getBranchStats, deleteBranch, getTeachersByBranchAndShift
+    addBranch, getAllBranches, getBranchById, updateBranch, getBranchDetails, getBranchStats, deleteBranch, getTeachersByBranchAndShift, getAllActiveBranches
 };
