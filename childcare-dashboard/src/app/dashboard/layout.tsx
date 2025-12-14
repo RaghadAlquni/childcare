@@ -6,6 +6,17 @@ import Navbar from "@/components/dashboard/navbar/navbar";
 import EventList from "@/components/dashboard/eventList/eventList";
 import { useAppSelector, useAppDispatch } from "@/redux/hooks";
 import { loginSuccess } from "@/redux/authSlice";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "مركز واحة المعرفة لضيافة الأطفال",
+  description: "مركز واحة المعرفة لضيافة الأطفال",
+  icons: {
+    icon: "/wmLogo.png",
+    shortcut: "/wmLogo.png",
+    apple: "/wmLogo.png",
+  },
+};
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { role } = useAppSelector((state) => state.auth);

@@ -13,6 +13,8 @@ export const metadata: Metadata = {
   description: "مركز واحة المعرفة لضيافة الأطفال",
   icons: {
     icon: "/wmLogo.png",
+    shortcut: "/wmLogo.png",
+    apple: "/wmLogo.png",
   },
 };
 
