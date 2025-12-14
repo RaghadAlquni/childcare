@@ -626,6 +626,75 @@ const getAllTeachers = async (req, res) => {
   }
 };
 
+const updateUser = async (req, res) => {
+  try {
+    const { id } = req.params; 
+    const requestingUser = req.user;
+
+    // جلب المستخدم
+    let user = await User.findById(id);
+    if (!user) return res.status(404).json({ message: "❌ المستخدم غير موجود" });
+
+    // صلاحيات التعديل
+    if (!["admin", "director", "assistant_director"].includes(requestingUser.role)) {
+      return res.status(403).json({ message: "🚫 غير مصرح لك بتعديل بيانات المستخدمين" });
+    }
+
+    if (requestingUser.role !== "admin") {
+      if (String(user.branch) !== String(requestingUser.branch)) {
+        return res.status(403).json({ message: "🚫 لا يمكنك تعديل مستخدم خارج فرعك" });
+      }
+    }
+
+    const { fullName, email, phone, idNumber, role, branch, shift, password } = req.body;
+
+    // منع تكرار الهوية والإيميل
+    if (email) {
+      const exists = await User.findOne({ email, _id: { $ne: id } });
+      if (exists) return res.status(400).json({ message: "❌ البريد الإلكتروني مستخدم من قبل" });
+    }
+
+    if (idNumber) {
+      const exists = await User.findOne({ idNumber, _id: { $ne: id } });
+      if (exists) return res.status(400).json({ message: "❌ رقم الهوية مستخدم من قبل" });
+    }
+
+    // تحديث كلمة المرور 
+    if (password) {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      user.password = hashedPassword;
+    }
+
+    // تحديث باقي البيانات (اختياري)
+    if (fullName) user.fullName = fullName;
+    if (email) user.email = email;
+    if (phone) user.phone = phone;
+    if (idNumber) user.idNumber = idNumber;
+    if (role) user.role = role;
+
+    // ✨ تحديث الفرع والشفت
+    if (role === "admin") {
+      user.branch = null;
+      user.shift = null;
+    } else {
+      if (branch) user.branch = branch;
+      if (shift) user.shift = shift;
+    }
+
+    await user.save();
+
+    res.json({
+      message: "✅ تم تحديث بيانات المستخدم بنجاح",
+      user,
+    });
+  } catch (error) {
+    console.error("Update User Error:", error);
+    res.status(500).json({
+      message: "❌ حدث خطأ أثناء تحديث بيانات المستخدم",
+      error: error.message,
+    });
+  }
+};
 
 module.exports = {
   addUser,
@@ -642,4 +711,5 @@ module.exports = {
   getAllManagedTeachers,
   getManagedTeachers,
   getAllTeachers,
+  updateUser,
 };
