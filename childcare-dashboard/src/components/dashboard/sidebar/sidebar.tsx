@@ -50,8 +50,14 @@ const Sidebar = ({ role }: { role: string }) => {
       {/* السايد بار */}
 <aside
   dir="rtl"
-  className={`w-[270px] lg:min-w-[270px] min-h-screen bg-[var(--card)] border-l border-[var(--border)]
-    p-4 pt-6 flex flex-col items-end overflow-y-auto
+  className={`
+    w-[270px] lg:min-w-[270px] min-h-screen 
+    bg-[var(--card)] border-l border-[var(--border)]
+    p-4 pt-6 flex flex-col items-end 
+
+    overflow-y-auto
+    scrollbar-thin scrollbar-thumb-[#c7c7c7] scrollbar-track-transparent 
+
     z-[9998]
 
     /* desktop */
@@ -60,8 +66,7 @@ const Sidebar = ({ role }: { role: string }) => {
     /* mobile + ipad drawer */
     fixed top-0 right-0 transform transition-transform duration-300
     ${isOpen ? "translate-x-0" : "translate-x-full"}
-  `}
->
+  `}>
 
 
          {/* زر الإغلاق للجوال فقط */}

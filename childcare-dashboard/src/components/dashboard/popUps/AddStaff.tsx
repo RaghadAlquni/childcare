@@ -4,7 +4,14 @@ import React, { useState, useEffect } from "react";
 import AddIcon from "../../../../public/icons/addIcon";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
-import Swal from "sweetalert2"; // ⬅️ NEW
+import Swal from "sweetalert2";
+
+// 🔥 لضمان أن السويت ألرت يكون فوق كل شيء
+const swalStyleFix = `
+  .swal2-container {
+    z-index: 999999 !important;
+  }
+`;
 
 type PopupProps = {
   open: boolean;
@@ -22,7 +29,6 @@ export default function AddStaff({ open, setOpen }: PopupProps) {
   const { role: userRole, branch: userBranch, shift: userShift } =
     useSelector((state: RootState) => state.auth.user || {});
 
-  // 🌟 
   const [loading, setLoading] = useState(false);
 
   const [fullName, setFullName] = useState("");
@@ -37,6 +43,10 @@ export default function AddStaff({ open, setOpen }: PopupProps) {
 
   useEffect(() => {
     if (!open) return;
+
+    const styleTag = document.createElement("style");
+    styleTag.innerHTML = swalStyleFix;
+    document.head.appendChild(styleTag);
 
     const fetchBranches = async () => {
       try {
@@ -61,7 +71,7 @@ export default function AddStaff({ open, setOpen }: PopupProps) {
   // ================= Submit — إضافة الموظف =================
   const handleAddUser = async (e: any) => {
     e.preventDefault();
-    setLoading(true); // 🌟 to Loading
+    setLoading(true);
 
     try {
       const token = localStorage.getItem("token");
@@ -79,8 +89,21 @@ export default function AddStaff({ open, setOpen }: PopupProps) {
           idNumber,
           phone,
           role,
-          branch: userRole === "admin" ? branch : userBranch,
-          shift: userRole === "admin" ? shift : userShift,
+
+          // ⭐ هنا التعديل الأساسي
+          branch:
+            role === "admin"
+              ? null
+              : userRole === "admin"
+              ? branch
+              : userBranch,
+
+          shift:
+            role === "admin"
+              ? null
+              : userRole === "admin"
+              ? shift
+              : userShift,
         }),
       });
 
@@ -94,7 +117,7 @@ export default function AddStaff({ open, setOpen }: PopupProps) {
           confirmButtonColor: "#e84141",
         });
 
-        setLoading(false); // 🌟 NEW
+        setLoading(false);
         return;
       }
 
@@ -124,7 +147,7 @@ export default function AddStaff({ open, setOpen }: PopupProps) {
       });
     }
 
-    setLoading(false); // 🌟 NEW
+    setLoading(false);
   };
 
   return (
@@ -148,7 +171,6 @@ export default function AddStaff({ open, setOpen }: PopupProps) {
 
         <form className="flex flex-col gap-5 mt-2" onSubmit={handleAddUser}>
 
-         
           {/* الاسم + الهوية */}
           <div className="flex gap-5">
             <input
@@ -187,8 +209,44 @@ export default function AddStaff({ open, setOpen }: PopupProps) {
             />
           </div>
 
-          {/* الفترة + الفرع — تظهر فقط للادمن */}
-          {userRole === "admin" && (
+          {/* الوظيفة */}
+          <div className="bg-[#f5f5f5] rounded-[10px] border border-[#f1f1f1] p-[10px]">
+            <select
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
+              className="bg-transparent outline-none text-[#7b7b7b] w-full"
+            >
+              <option value="">اختر الوظيفة</option>
+
+              {userRole === "admin" && (
+                <>
+                  <option value="admin">مسؤول</option>
+                  <option value="director">مدير</option>
+                  <option value="assistant_director">مدير مساعد</option>
+                  <option value="teacher">معلم</option>
+                  <option value="assistant_teacher">معلم مساعد</option>
+                </>
+              )}
+
+              {userRole === "director" && (
+                <>
+                  <option value="assistant_director">مدير مساعد</option>
+                  <option value="teacher">معلم</option>
+                  <option value="assistant_teacher">معلم مساعد</option>
+                </>
+              )}
+
+              {userRole === "assistant_director" && (
+                <>
+                  <option value="teacher">معلم</option>
+                  <option value="assistant_teacher">معلم مساعد</option>
+                </>
+              )}
+            </select>
+          </div>
+
+          {/* الفترة + الفرع — تظهر فقط لو الإضافة ليست Admin */}
+          {userRole === "admin" && role !== "admin" && (
             <div className="flex gap-5">
 
               {/* الفترة */}
@@ -223,50 +281,14 @@ export default function AddStaff({ open, setOpen }: PopupProps) {
             </div>
           )}
 
-          {/* الوظيفة */}
-          <div className="bg-[#f5f5f5] rounded-[10px] border border-[#f1f1f1] p-[10px]">
-            <select
-  value={role}
-  onChange={(e) => setRole(e.target.value)}
-  className="bg-transparent outline-none text-[#7b7b7b] w-full"
->
-  <option value="">اختر الوظيفة</option>
-
-  {/* صلاحيات حسب الدور */}
-  {userRole === "admin" && (
-    <>
-      <option value="admin">مسؤول</option>
-      <option value="director">مدير</option>
-      <option value="assistant_director">مدير مساعد</option>
-      <option value="teacher">معلم</option>
-      <option value="assistant_teacher">معلم مساعد</option>
-    </>
-  )}
-
-  {userRole === "director" && (
-    <>
-      <option value="assistant_director">مدير مساعد</option>
-      <option value="teacher">معلم</option>
-      <option value="assistant_teacher">معلم مساعد</option>
-    </>
-  )}
-
-  {userRole === "assistant_director" && (
-    <>
-      <option value="teacher">معلم</option>
-      <option value="assistant_teacher">معلم مساعد</option>
-    </>
-  )}
-</select>
-
-          </div>
+          
 
           {/* زر إضافة */}
           <div className="flex justify-center mt-3">
             <button
               type="submit"
               className="flex justify-center items-center bg-[#f9b236] h-[40px] w-[120px] rounded-[13px] text-white cursor-pointer font-medium gap-2 text-[16px] disabled:opacity-60"
-              disabled={loading} // 🌟 NEW
+              disabled={loading}
             >
               {loading ? (
                 <span className="animate-spin w-5 h-5 border-2 border-white border-t-transparent rounded-full"></span>
