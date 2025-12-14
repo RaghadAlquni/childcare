@@ -51,7 +51,7 @@ const Sidebar = ({ role }: { role: string }) => {
 <aside
   dir="rtl"
   className={`
-    w-[270px] lg:min-w-[270px] min-h-screen 
+    w-[270px] lg:min-w-[270px] h-full lg:min-h-screen
     bg-[var(--card)] border-l border-[var(--border)]
     p-4 pt-6 flex flex-col items-end 
 

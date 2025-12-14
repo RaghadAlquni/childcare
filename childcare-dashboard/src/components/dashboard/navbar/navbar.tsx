@@ -32,7 +32,7 @@ const Navbar = () => {
           </div>
 
           {/* القسم الأيسر */}
-          <div className="flex flex-row-reverse justify-start items-center gap-3 md:gap-4 md:self-center md:ml-3 ml-1">
+          <div className="flex flex-row-reverse justify-center items-center gap-3 md:gap-4 md:self-center md:ml-3">
             
             <div className="group flex items-center gap-3 bg-[var(--bordergray)] border border-[var(--bordergray)] rounded-xl px-1 py-1">
               <div
