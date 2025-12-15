@@ -76,14 +76,14 @@ const About = () => {
 
 
         {/* ⭐⭐ الكروت ⭐⭐ */}
-        <div className="relative flex flex-col lg:flex-row justify-center items-stretch gap-8 mb-20 mt-20">
+        <div className="relative flex flex-col lg:flex-row justify-center items-stretch gap-10 mb-20 mt-20">
 
           {/* كرت 1 */}
           <div
             className="
               relative flex flex-col items-center justify-start
               bg-[rgba(249,178,54,0.60)] border border-[#F9B236] 
-              rounded-[40px] px-6 pt-[80px] pb-6
+              rounded-[40px] px-6 pt-[60px] pb-6
               w-full lg:max-w-[420px]
               mx-auto shadow-sm hover:-translate-y-1 transition-all duration-500
             "
@@ -116,7 +116,7 @@ const About = () => {
             className="
               relative flex flex-col items-center justify-start
               bg-[rgba(23,179,220,0.60)] border border-[#17B3DC] 
-              rounded-[40px] px-6 pt-[80px] pb-[60px]
+              rounded-[40px] px-6 pt-[60px] pb-[60px]
               w-full lg:max-w-[420px]
               mx-auto shadow-sm hover:-translate-y-1 transition-all duration-500
             "
@@ -149,7 +149,7 @@ const About = () => {
             className="
               relative flex flex-col items-center justify-start
               bg-[rgba(249,178,54,0.60)] border border-[#F9B236] 
-              rounded-[40px] px-6 pt-[80px] pb-6
+              rounded-[40px] px-6 pt-[60px] pb-6
               w-full lg:max-w-[420px]
               mx-auto shadow-sm hover:-translate-y-1 transition-all duration-500
             "
@@ -182,7 +182,7 @@ const About = () => {
             className="
               relative flex flex-col items-center justify-start
               bg-[rgba(23,179,220,0.60)] border border-[#17B3DC] 
-              rounded-[40px] px-6 pt-[80px] pb-[60px]
+              rounded-[40px] px-6 pt-[60px] pb-[60px]
               w-full lg:max-w-[420px]
               mx-auto shadow-sm hover:-translate-y-1 transition-all duration-500
             "
