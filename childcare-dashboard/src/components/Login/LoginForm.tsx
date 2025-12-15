@@ -29,7 +29,6 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<any>({});
 
-  // Validate
   const validate = () => {
     let newErrors: any = {};
 
@@ -38,7 +37,6 @@ const Login = () => {
 
     setErrors(newErrors);
 
-    // 🔥 SweetAlert للحقول الناقصة
     if (Object.keys(newErrors).length > 0) {
       Swal.fire({
         title: "تنبيه",
@@ -67,13 +65,10 @@ const Login = () => {
 
       const token = res.data.token;
 
-      // احفظ التوكن
       localStorage.setItem("token", token);
 
-      // حللي التوكن
       const decoded = jwtDecode<DecodedToken>(token);
 
-      // ❗ مهم جداً نحفظ بيانات المستخدم
       localStorage.setItem(
         "user",
         JSON.stringify({
@@ -87,20 +82,18 @@ const Login = () => {
 
       dispatch(loginSuccess(token));
 
-      // 🔥 SweetAlert نجاح تسجيل الدخول
       await Swal.fire({
         title: "تم تسجيل الدخول بنجاح",
         text: `أهلاً ${decoded.fullName}!`,
         icon: "success",
-        confirmButtonText: "متابعة",
         timer: 1500,
+        confirmButtonText: "متابعة",
         didOpen: () => {
           const el = document.querySelector(".swal2-container") as HTMLElement;
           if (el) el.style.zIndex = "20000";
         },
       });
 
-      // التوجيه حسب الدور
       const role = decoded.role.toLowerCase();
 
       if (role === "admin") router.push("/dashboard?role=admin");
@@ -125,7 +118,7 @@ const Login = () => {
   };
 
   return (
-    <div className="w-full h-screen bg-white flex flex-col items-center justify-center overflow-hidden px-4 md:px-0">
+<div className="w-full min-h-screen bg-white flex flex-col items-center justify-start overflow-y-auto px-4 md:px-0 py-10">
 
       <div className="w-[200px] h-[200px] md:w-[235px] md:h-[235px] bg-[url('https://codia-f2c.s3.us-west-1.amazonaws.com/image/2025-11-16/AJTRe2kLhY.png')] bg-cover bg-no-repeat mt-4" />
 
@@ -137,7 +130,6 @@ const Login = () => {
           يرجى تسجيل الدخول للاستمرار
         </span>
 
-        {/* Email */}
         <div className="flex flex-col gap-[10px]">
           <label className="text-[16px] font-medium text-[#3b3b3b] text-right">
             البريد الإلكتروني
@@ -156,7 +148,6 @@ const Login = () => {
           )}
         </div>
 
-        {/* Password */}
         <div className="flex flex-col gap-[10px]">
           <label className="text-[16px] font-medium text-[#3b3b3b] text-right">
             كلمة المرور
@@ -175,7 +166,6 @@ const Login = () => {
           )}
         </div>
 
-        {/* submit */}
         <button
           type="submit"
           className="w-[160px] h-[59px] bg-[#f9b236] text-white rounded-[12px] mx-auto mt-2 shadow-[4px_4px_30px_0_rgba(0,0,0,0.05)] text-[20px] font-medium cursor-pointer"
@@ -183,6 +173,47 @@ const Login = () => {
           تسجيل الدخول
         </button>
       </form>
+
+      {/* حسابات جاهزة للتجربة */}
+      <div className="w-full max-w-[715px] mt-6 flex flex-col gap-4 text-right">
+        <span className="text-[16px] font-bold mx-auto text-[#3b3b3b]">
+          تسجيل دخول سريع للتجربة
+        </span>
+
+        <div className="flex flex-col md:flex-row gap-3 justify-center">
+
+          <button
+            onClick={() => {
+              setEmail("admin@example.com");
+              setPassword("00000");
+            }}
+            className="px-4 py-3 bg-[#f9b236] text-white rounded-lg hover:bg-[#e6a131] transition text-[16px]"
+          >
+            دخول كـ (Admin)
+          </button>
+
+          <button
+            onClick={() => {
+              setEmail("director@example.com");
+              setPassword("41h8fi03");
+            }}
+            className="px-4 py-3 bg-[#17B3DC] text-white rounded-lg transition text-[16px]"
+          >
+            دخول كـ مدير
+          </button>
+
+          <button
+            onClick={() => {
+              setEmail("teacher@example.com");
+              setPassword("31dcqbq3");
+            }}
+            className="px-4 py-3 bg-[#E84191] text-white rounded-lg transition text-[16px]"
+          >
+            دخول كـ معلم
+          </button>
+
+        </div>
+      </div>
     </div>
   );
 };

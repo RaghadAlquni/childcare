@@ -194,7 +194,7 @@ Swal.fire({
           <div
             key={cls.id}
             onClick={() => fetchOneClassroom(cls.id)}
-            className="cursor-pointer bg-[var(--bg)] border border-[var(--border)] rounded-xl p-6 shadow-sm hover:shadow-md transition-all"
+            className="cursor-pointer bg-[var(--card)] border border-[var(--border)] rounded-xl p-6 shadow-sm hover:shadow-md transition-all"
           >
             <h2 className="text-2xl font-bold text-[var(--text)] mb-3">
               {cls.name}

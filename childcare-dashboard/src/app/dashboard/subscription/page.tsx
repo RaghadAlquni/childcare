@@ -1,7 +1,7 @@
 "use client";
 
 import { useAppSelector } from "@/redux/hooks";
-import Subscription from "@/components/dashboard/subscription/directorSubscriptions";
+import Subscription from "@/components/dashboard/subscription/adminSubscriptions";
 
 export default function DashboardSubscription() {
 

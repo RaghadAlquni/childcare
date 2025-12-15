@@ -101,24 +101,21 @@ export default function SubscriptionsPage() {
         </button>
       </div>
 
-      {/* Loading state */}
       {loading && <p className="text-center text-gray-500">Loading...</p>}
 
-      {/* Empty state */}
       {!loading && subscriptions.length === 0 && (
-        <p className="text-gray-500 text-center">لا توجد اشتراكات بعد</p>
+        <p className="text-[var(--text)] text-center">لا توجد اشتراكات بعد</p>
       )}
 
       {/* Cards list */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 ">
         {subscriptions.map((sub) => (
           <div
             key={sub._id}
-            className="p-5 border rounded-xl shadow-sm bg-white hover:shadow-md transition"
-          >
+            className="p-5 bg-[var(--card)] border border-[var(--border)] rounded-xl shadow-sm hover:shadow-md transition">
             {/* Header */}
             <div className="flex justify-between items-center mb-3">
-              <h2 className="text-lg font-semibold">{sub.name}</h2>
+              <h2 className="text-lg text-[var(--text)] font-semibold">{sub.name}</h2>
 
               <span
                 className={`px-3 py-1 text-sm rounded-full ${
@@ -132,34 +129,34 @@ export default function SubscriptionsPage() {
             </div>
 
             {/* Info */}
-            <div className="text-gray-700 space-y-1 text-sm">
+            <div className="text-[var(--text)] space-y-1 text-sm">
               <p>
-                <span className="font-medium">الفرع:</span>{" "}
+                <span className="font-medium text-[var(--text)]">الفرع:</span>{" "}
                 {sub.branch?.branchName || "-"}
               </p>
 
               <p>
-                <span className="font-medium">الفترة:</span> {sub.shift}
+                <span className="font-medium text-[var(--text)]">الفترة:</span> {sub.shift}
               </p>
 
               <p>
-                <span className="font-medium">السعر:</span> {sub.price} SAR
+                <span className="font-medium text-[var(--text)]">السعر:</span> {sub.price} SAR
               </p>
 
               <p>
-                <span className="font-medium">نوع الاشتراك:</span>{" "}
+                <span className="font-medium text-[var(--text)]">نوع الاشتراك:</span>{" "}
                 {sub.durationType}
               </p>
 
               <p>
-                <span className="font-medium">بداية الاشتراك:</span>{" "}
+                <span className="font-medium text-[var(--text)]">بداية الاشتراك:</span>{" "}
                 {sub.subscriptionStart
                   ? new Date(sub.subscriptionStart).toLocaleDateString("en-GB")
                   : "-"}
               </p>
 
               <p>
-                <span className="font-medium">نهاية الاشتراك:</span>{" "}
+                <span className="font-medium text-[var(--text)]">نهاية الاشتراك:</span>{" "}
                 {sub.subscriptionEnd
                   ? new Date(sub.subscriptionEnd).toLocaleDateString("en-GB")
                   : "-"}
