@@ -11,7 +11,7 @@ const Home = () => {
   return (
     <section
       id="Home"
-      className="main-container flex flex-col-reverse lg:flex-row justify-center items-center w-full max-w-[1440px] min-h-screen px-6 md:px-16 mx-auto relative overflow-x-hidden pt-10 lg:pt-30"
+      className="main-container flex flex-col-reverse lg:flex-row justify-center items-center w-full max-w-[1440px] min-h-screen px-6 md:px-16 mx-auto relative overflow-x-hidden"
     >
       {/* 🩵 النصوص */}
       <div className="flex flex-col items-start text-right gap-6 w-full lg:w-[600px] z-[2] mt-10 lg:mt-0">

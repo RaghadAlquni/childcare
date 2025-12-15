@@ -36,7 +36,7 @@ const Navbar = () => {
 
   return (
     <header
-      className="bg-white py-3 px-6 md:px-12 shadow-sm flex justify-between items-center w-full md:fixed md:top-0 md:left-0 md:right-0 md:z-50"
+      className="bg-white py-3 px-6 md:px-12 shadow-sm flex justify-between items-center w-full md:top-0 md:left-0 md:right-0 md:z-50"
       dir="rtl"
     >
       {/* Logo */}
@@ -73,7 +73,7 @@ const Navbar = () => {
       </nav>
 
       {/* Buttons */}
-      <div className="hidden md:flex items-center gap-4">
+<div className="hidden lg:flex items-center gap-4">
         <button className="bg-[#F9B236] text-white rounded-full py-[8px] px-[20px] font-bold hover:opacity-90 transition">
           تواصل معنا
         </button>
