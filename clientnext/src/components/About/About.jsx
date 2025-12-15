@@ -75,7 +75,7 @@ const About = () => {
         </p>
 
 
-        {/* ⭐⭐ الكروت ⭐⭐ */}
+        {/*  الكروت*/}
         <div className="relative flex flex-col lg:flex-row justify-center items-stretch gap-10 mb-20 mt-20">
 
           {/* كرت 1 */}
