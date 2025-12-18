@@ -45,7 +45,7 @@ The system supports multiple roles, each with different permissions:
 ## Tech Stack
 **Backend**
 
-![NodeJS](https://img.shields.io/badge/Node.js-00ADD8?style=for-the-badge&logo=node.js&logoColor=white)![Express](https://img.shields.io/badge/Express-404D59?style=for-the-badge&logo=express&logoColor=white)![MongoDB](https://img.shields.io/badge/MongoDB-404D59?style=for-the-badge&logo=mongodb&logoColor=white)![JWT](https://img.shields.io/badge/JWT-Authentication-404D59?style=for-the-badge&logo=jsonwebtokens&logoColor=white)![Swagger](https://img.shields.io/badge/Swagger-OpenAPI-00ADD8?style=for-the-badge&logo=swagger&logoColor=white)
+![NodeJS](https://img.shields.io/badge/Node.js-00ADD8?style=for-the-badge&logo=node.js&logoColor=white)![Express](https://img.shields.io/badge/Express-404D59?style=for-the-badge&logo=express&logoColor=white)![MongoDB](https://img.shields.io/badge/MongoDB-00ADD8?style=for-the-badge&logo=mongodb&logoColor=white)![JWT](https://img.shields.io/badge/JWT-Authentication-404D59?style=for-the-badge&logo=jsonwebtokens&logoColor=white)![Swagger](https://img.shields.io/badge/Swagger-OpenAPI-00ADD8?style=for-the-badge&logo=swagger&logoColor=white)
 
 **Frontend: Public website**
 
