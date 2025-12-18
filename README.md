@@ -29,7 +29,7 @@ Modular structure
 
 Role-based access control
 
-## 👥 User Roles
+## User Roles
 
 The system supports multiple roles, each with different permissions:
 
@@ -41,13 +41,17 @@ The system supports multiple roles, each with different permissions:
 
 * Parent / Guardian – Child registration and resubscription
 
+## Tech Stack
+**Backend**
 
-![NodeJS](https://img.shields.io/badge/Node.js-00ADD8?style=for-the-badge&logo=node.js&logoColor=white)![Express](https://img.shields.io/badge/Express-404D59?style=for-the-badge&logo=express&logoColor=white)![MongoDB](https://img.shields.io/badge/MongoDB-00ADD8?style=for-the-badge&logo=mongodb&logoColor=white)
+![NodeJS](https://img.shields.io/badge/Node.js-00ADD8?style=for-the-badge&logo=node.js&logoColor=white)![Express](https://img.shields.io/badge/Express-404D59?style=for-the-badge&logo=express&logoColor=white)![MongoDB](https://img.shields.io/badge/MongoDB-00ADD8?style=for-the-badge&logo=mongodb&logoColor=white)![JWT](https://img.shields.io/badge/JWT-Authentication-404D59?style=for-the-badge&logo=jsonwebtokens&logoColor=white)![Swagger](https://img.shields.io/badge/Swagger-OpenAPI-00ADD8?style=for-the-badge&logo=swagger&logoColor=white)
 
+**Frontend: Public website**
 
+![React](https://img.shields.io/badge/React-00ADD8?style=for-the-badge&logo=react&logoColor=white)![NextJS](https://img.shields.io/badge/Next.js-404D59?style=for-the-badge&logo=nextdotjs&logoColor=white)![Tailwind](https://img.shields.io/badge/TailwindCSS-00ADD8?style=for-the-badge&logo=tailwindcss&logoColor=white)![JavaScript](https://img.shields.io/badge/JavaScript-404D59?style=for-the-badge&logo=javascript&logoColor=white)[Axios](https://img.shields.io/badge/Axios-00ADD8?style=for-the-badge&logo=axios&logoColor=white)
 
-![React](https://img.shields.io/badge/React-00ADD8?style=for-the-badge&logo=react&logoColor=white)![NextJS](https://img.shields.io/badge/Next.js-404D59?style=for-the-badge&logo=nextdotjs&logoColor=white)![Tailwind](https://img.shields.io/badge/TailwindCSS-00ADD8?style=for-the-badge&logo=tailwindcss&logoColor=white)![JavaScript](https://img.shields.io/badge/JavaScript-404D59?style=for-the-badge&logo=javascript&logoColor=white)
+**Frontend: Dashboard**
 
-![React](https://img.shields.io/badge/React-00ADD8?style=for-the-badge&logo=react&logoColor=white)![NextJS](https://img.shields.io/badge/Next.js-404D59?style=for-the-badge&logo=nextdotjs&logoColor=white)![Tailwind](https://img.shields.io/badge/TailwindCSS-00ADD8?style=for-the-badge&logo=tailwindcss&logoColor=white)![TypeScript](https://img.shields.io/badge/TypeScript-404D59?style=for-the-badge&logo=typescript&logoColor=white)
+![React](https://img.shields.io/badge/React-00ADD8?style=for-the-badge&logo=react&logoColor=white)![NextJS](https://img.shields.io/badge/Next.js-404D59?style=for-the-badge&logo=nextdotjs&logoColor=white)![Tailwind](https://img.shields.io/badge/TailwindCSS-00ADD8?style=for-the-badge&logo=tailwindcss&logoColor=white)![TypeScript](https://img.shields.io/badge/TypeScript-404D59?style=for-the-badge&logo=typescript&logoColor=white)[Axios](https://img.shields.io/badge/Axios-00ADD8?style=for-the-badge&logo=axios&logoColor=white)![Redux](https://img.shields.io/badge/Redux-404D59?style=for-the-badge&logo=redux&logoColor=white)
 
-
+## Project Structure
