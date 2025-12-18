@@ -8,7 +8,7 @@ The system consists of multiple parts working together to manage daily operation
 ## The project is divided into:
 **1. Backend (API Server)** 
 
-![NodeJS](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=node.js&logoColor=white)![Express](https://img.shields.io/badge/Express-404D59?style=for-the-badge&logo=express&logoColor=white)![MongoDB](https://img.shields.io/badge/MongoDB-339933?style=for-the-badge&logo=mongodb&logoColor=white)
+![NodeJS](https://img.shields.io/badge/Node.js-00ADD8?style=for-the-badge&logo=node.js&logoColor=white)![Express](https://img.shields.io/badge/Express-404D59?style=for-the-badge&logo=express&logoColor=white)![MongoDB](https://img.shields.io/badge/MongoDB-00ADD8?style=for-the-badge&logo=mongodb&logoColor=white)
 
 **2. Frontend:**
 - Public Website
