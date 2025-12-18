@@ -14,6 +14,7 @@ The system consists of multiple parts working together to manage daily operation
 
 ## Architecture Overview
 **Backend:** RESTful API responsible for business logic, authentication, and data management.
+
 **Frontend:**
 
 Public Website: Used by parents/guardians for basic interactions.
@@ -28,7 +29,19 @@ Modular structure
 
 Role-based access control
 
-Clear separation between public and internal features
+## 👥 User Roles
+
+The system supports multiple roles, each with different permissions:
+
+* Admin – Full system access and configuration
+
+* Director – Branch and staff management
+
+* Teacher / Assistant – Classroom and attendance management
+
+* Parent / Guardian – Child registration and resubscription
+
+
 ![NodeJS](https://img.shields.io/badge/Node.js-00ADD8?style=for-the-badge&logo=node.js&logoColor=white)![Express](https://img.shields.io/badge/Express-404D59?style=for-the-badge&logo=express&logoColor=white)![MongoDB](https://img.shields.io/badge/MongoDB-00ADD8?style=for-the-badge&logo=mongodb&logoColor=white)
 
 
