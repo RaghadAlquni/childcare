@@ -40,6 +40,70 @@ userRouter.get("/teacher/:id", authenticate, authorize(["admin", "director", "as
 userRouter.get("/assistantTeacher/:id", authenticate, authorize(["admin", "director", "assistant_director"]), getAssistantTeacher);
 userRouter.get("/directorDetails/:id", authenticate, authorize(["admin", "director"]), getDirectorDetails);
 userRouter.get("/managedTeachers/all", authenticate, authorize(["director", "assistant_director"]), getAllManagedTeachers);
+
+// ✅ جلب المعلمين التابعين للمدير أو المساعد فقط
+/**
+ * @swagger
+ * /managedTeachers:
+ *   get:
+ *     summary: Get managed teachers
+ *     description: |
+ *       Retrieve teachers managed by the current director or assistant director.
+ *
+ *       Rules:
+ *       - Only users with role "director" or "assistant_director" can access this endpoint.
+ *       - Only users with role "teacher" are returned.
+ *       - Each teacher includes:
+ *         - Branch information
+ *         - Assigned children (for counting purposes)
+ *
+ *       This endpoint requires JWT authentication.
+ *     tags: [User]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Managed teachers retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 teachers:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       _id:
+ *                         type: string
+ *                         example: teacherId123
+ *                       fullName:
+ *                         type: string
+ *                         example: المعلمة نورة
+ *                       role:
+ *                         type: string
+ *                         example: teacher
+ *                       branch:
+ *                         type: object
+ *                         properties:
+ *                           branchName:
+ *                             type: string
+ *                             example: فرع الروضة
+ *                       teacherChildren:
+ *                         type: array
+ *                         description: List of child IDs assigned to the teacher
+ *                         items:
+ *                           type: string
+ *                           example: childId123
+ *       401:
+ *         description: Unauthorized (missing or invalid token)
+ *       403:
+ *         description: Forbidden (role not allowed)
+ *       404:
+ *         description: Director not found
+ *       500:
+ *         description: Server error
+ */
 userRouter.get("/managedTeachers", authenticate, authorize(["director", "assistant_director"]), getManagedTeachers);
 userRouter.get("/teachers/all", authenticate, authorize(["admin"]), getAllTeachers);
 userRouter.put("/updateUsers/:id", authenticate, updateUser);
