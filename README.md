@@ -73,9 +73,11 @@ Each major part of the project has its own README with setup and implementation 
 
 
 ## 🎯 Goals
-**Apply real-world full-stack concepts**
-**Practice clean architecture and maintainable code**
-**Gradually introduce production best practices**
+* **Apply real-world full-stack concepts**
+
+* **Practice clean architecture and maintainable code**
+
+* **Gradually introduce production best practices**
 
 ## 📝 Notes
 This project reflects continuous learning.
