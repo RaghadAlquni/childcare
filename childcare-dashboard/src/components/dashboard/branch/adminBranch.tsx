@@ -9,22 +9,25 @@ import { RootState } from "@/redux/store";
 export default function BranchesPage() {
   const [branches, setBranches] = useState<any[]>([]);
   const [openAdd, setOpenAdd] = useState(false);
+  const [loading, setLoading] = useState(true); // ⭐ حالة اللودينغ
 
   const token = useSelector((state: RootState) => state.auth.token);
 
   // ---- Load Branches ----
   const loadBranches = async () => {
     try {
+      setLoading(true); // يبدأ اللودينغ
       const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/allBranchs`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
 
-      setBranches(res.data.data); // ← مصفوفة الفروع
-      console.log("DATA:", res.data);
+      setBranches(res.data.data);
     } catch (error) {
       console.error(error);
+    } finally {
+      setLoading(false); // يوقف اللودينغ
     }
   };
 
@@ -46,80 +49,99 @@ export default function BranchesPage() {
         </button>
       </div>
 
-      {/* قائمة الفروع */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-        {branches.map((branch: any) => (
-          <div
-            key={branch._id}
-            className="
-              p-2
-              rounded-2xl 
-              shadow-md 
-              bg-[var(--card)] 
-              border 
-              border-[var(--border)] 
-              hover:shadow-lg 
-              transition
-              flex
-              flex-col
-            "
-          >
-            {/* الصورة */}
-            <div className="w-full h-40 mb-4">
-              <img
-                src={branch.branchImg}
-                alt={branch.branchName}
-                className="w-full h-full object-cover rounded-xl"
-              />
+      {/* ⭐⭐ Skeleton Loading (يظهر قبل البيانات) */}
+      {loading && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 animate-pulse">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div
+              key={i}
+              className="p-2 rounded-2xl shadow-md bg-[var(--card)] border border-[var(--border)] flex flex-col"
+            >
+              <div className="w-full h-40 bg-gray-300 rounded-xl mb-4"></div>
+
+              <div className="h-4 bg-gray-300 rounded w-1/2 mb-3"></div>
+
+              <div className="h-3 bg-gray-300 rounded w-3/4 mb-2"></div>
+
+              <div className="h-3 bg-gray-300 rounded w-1/4 mb-4"></div>
+
+              <div className="h-10 bg-gray-300 rounded-xl"></div>
             </div>
+          ))}
+        </div>
+      )}
 
-            {/* النص */}
-            <h2 className="text-lg font-medium text-[var(--text)] mb-2">
-            فرع  {branch.branchName} 
-            </h2>
-
-            <p className="text-[14px] text-[var(--text)] mb-1">
-              📍 {branch.city} - {branch.district}
-            </p>
-
-            <p className="mt-2 text-[var(--text)]">
-              الحالة:{" "}
-              <span
-                className={`text-[12px] font-medium ${
-                  branch.status === "نشط" ? "text-green-600" : "text-red-600"
-                }`}
-              >
-                {branch.status}
-              </span>
-            </p>
-
-            {/* زر التفاصيل */}
-            <button
+      {/* ⭐⭐ قائمة الفروع */}
+      {!loading && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+          {branches.map((branch: any) => (
+            <div
+              key={branch._id}
               className="
-                w-full 
-                mt-4 
-                py-2 
-                rounded-xl 
-                text-white 
-                bg-[#F9B236] 
-                hover:bg-[#d79a2d]
+                p-2
+                rounded-2xl 
+                shadow-md 
+                bg-[var(--card)] 
+                border 
+                border-[var(--border)] 
+                hover:shadow-lg 
                 transition
-                font-medium
+                flex
+                flex-col
               "
             >
-              عرض التفاصيل
-            </button>
-          </div>
-        ))}
-      </div>
+              {/* الصورة */}
+              <div className="w-full h-40 mb-4">
+                <img
+                  src={branch.branchImg}
+                  alt={branch.branchName}
+                  className="w-full h-full object-cover rounded-xl"
+                />
+              </div>
+
+              {/* النص */}
+              <h2 className="text-lg font-medium text-[var(--text)] mb-2">
+                فرع {branch.branchName}
+              </h2>
+
+              <p className="text-[14px] text-[var(--text)] mb-1">
+                📍 {branch.city} - {branch.district}
+              </p>
+
+              <p className="mt-2 text-[var(--text)]">
+                الحالة:{" "}
+                <span
+                  className={`text-[12px] font-medium ${
+                    branch.status === "نشط" ? "text-green-600" : "text-red-600"
+                  }`}
+                >
+                  {branch.status}
+                </span>
+              </p>
+
+              {/* زر التفاصيل */}
+              <button
+                className="
+                  w-full 
+                  mt-4 
+                  py-2 
+                  rounded-xl 
+                  text-white 
+                  bg-[#F9B236] 
+                  hover:bg-[#d79a2d]
+                  transition
+                  font-medium
+                "
+              >
+                عرض التفاصيل
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* Popup */}
-      <AddBranchPopup
-        open={openAdd}
-        onClose={() => setOpenAdd(false)}
-        onAdded={loadBranches}
-      />
+      <AddBranchPopup open={openAdd} onClose={() => setOpenAdd(false)} onAdded={loadBranches} />
     </div>
   );
 }
-

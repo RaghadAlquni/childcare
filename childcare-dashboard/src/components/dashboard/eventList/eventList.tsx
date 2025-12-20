@@ -18,6 +18,20 @@ interface EventItem {
 function formatEvent(e: any): EventItem {
   const d = new Date(e.date);
 
+  const months = [
+  "يناير",
+  "فبراير",
+  "مارس",
+  "أبريل",
+  "مايو",
+  "يونيو",
+  "يوليو",
+  "أغسطس",
+  "سبتمبر",
+  "أكتوبر",
+  "نوفمبر",
+  "ديسمبر",
+];
   const days = [
     "الأحد",
     "الاثنين",
@@ -31,7 +45,7 @@ function formatEvent(e: any): EventItem {
   return {
     fullDate: d, // نحتفظ بالتاريخ الحقيقي للفرز
     numberDay: d.getDate(),
-    date: d.toLocaleDateString("en-US", { day: "numeric", month: "long" }),
+    date: `${d.getDate()} ${months[d.getMonth()]}`,
     day: days[d.getDay()],
     title: e.title,
     type: e.type,
@@ -120,17 +134,8 @@ const upcoming = res.data
               key={index}
               className="flex justify-between items-center border-b border-[var(--border)] py-3"
             >
-              {/* النص */}
-              <div className="flex flex-col text-center w-full">
-                <span className="text-[14px] font-medium text-[var(--text)]">
-                  {ev.date}
-                </span>
-                <span className="text-[12px] text-[var(--text)]">
-                  {ev.title}
-                </span>
-              </div>
 
-              {/* الخلفية حسب النوع */}
+               {/* الخلفية حسب النوع */}
               <div
                 className={`w-[95px] h-[65px] rounded-2xl flex flex-col items-center justify-center 
                   ${
@@ -147,6 +152,17 @@ const upcoming = res.data
                   {ev.day}
                 </span>
               </div>
+              {/* النص */}
+              <div className="flex flex-col text-center w-full">
+                <span className="text-[14px] font-medium text-[var(--text)]">
+                  {ev.date}
+                </span>
+                <span className="text-[12px] text-[var(--text)]">
+                  {ev.title}
+                </span>
+              </div>
+
+             
             </div>
           ))}
         </div>

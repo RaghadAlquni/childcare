@@ -6,7 +6,6 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import Swal from "sweetalert2";
 
-// 🔥 لضمان أن السويت ألرت يكون فوق كل شيء
 const swalStyleFix = `
   .swal2-container {
     z-index: 999999 !important;
@@ -39,6 +38,7 @@ export default function AddStaff({ open, setOpen }: PopupProps) {
   const [shift, setShift] = useState("");
   const [branch, setBranch] = useState<string>("");
 
+  const [errors, setErrors] = useState<any>({});
   const [branches, setBranches] = useState<Branch[]>([]);
 
   useEffect(() => {
@@ -53,9 +53,7 @@ export default function AddStaff({ open, setOpen }: PopupProps) {
         const token = localStorage.getItem("token");
 
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/allBranchs`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         });
 
         const data = await res.json();
@@ -68,9 +66,59 @@ export default function AddStaff({ open, setOpen }: PopupProps) {
     fetchBranches();
   }, [open]);
 
+  // ⭐⭐⭐ الفاليديشن هنا فقط
+  const validateForm = () => {
+    const newErrors: any = {};
+
+    // الاسم عربي فقط
+    const arabicRegex = /^[\u0600-\u06FF\s]+$/;
+
+    if (!fullName.trim()) newErrors.fullName = "يرجى إدخال اسم الموظف";
+    else if (!arabicRegex.test(fullName))
+      newErrors.fullName = "الاسم يجب أن يكون باللغة العربية فقط";
+
+    // رقم الهوية: أرقام فقط
+    const numberRegex = /^[0-9]+$/;
+
+    if (!idNumber.trim()) newErrors.idNumber = "يرجى إدخال رقم الهوية";
+    else if (!numberRegex.test(idNumber))
+      newErrors.idNumber = "رقم الهوية يجب أن يحتوي على أرقام فقط";
+
+    // البريد: صيغة صحيحة
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!email.trim()) newErrors.email = "يرجى إدخال البريد الإلكتروني";
+    else if (!emailRegex.test(email))
+      newErrors.email = "يرجى إدخال بريد إلكتروني صحيح";
+
+    // الهاتف: 10 أرقام فقط
+    if (!phone.trim()) newErrors.phone = "يرجى إدخال رقم الهاتف";
+    else if (!numberRegex.test(phone))
+      newErrors.phone = "رقم الهاتف يجب أن يحتوي على أرقام انجليزية فقط";
+    else if (phone.length !== 10)
+      newErrors.phone = "رقم الهاتف يجب أن يتكون من 10 أرقام";
+
+    // الوظيفة
+    if (!role.trim()) newErrors.role = "يرجى اختيار الوظيفة";
+
+    // لو المستخدم Admin → يجب تحديد الفترة والفرع
+    if (userRole === "admin" && role !== "admin") {
+      if (!shift.trim()) newErrors.shift = "يرجى اختيار الفترة";
+      if (!branch.trim()) newErrors.branch = "يرجى اختيار الفرع";
+    }
+
+    setErrors(newErrors);
+
+    return Object.keys(newErrors).length === 0;
+  };
+
   // ================= Submit — إضافة الموظف =================
   const handleAddUser = async (e: any) => {
     e.preventDefault();
+
+    // التحقق قبل الإرسال
+    if (!validateForm()) return;
+
     setLoading(true);
 
     try {
@@ -90,7 +138,6 @@ export default function AddStaff({ open, setOpen }: PopupProps) {
           phone,
           role,
 
-          // ⭐ هنا التعديل الأساسي
           branch:
             role === "admin"
               ? null
@@ -137,6 +184,7 @@ export default function AddStaff({ open, setOpen }: PopupProps) {
       setRole("");
       setBranch("");
       setShift("");
+      setErrors({});
 
     } catch (error) {
       Swal.fire({
@@ -162,7 +210,6 @@ export default function AddStaff({ open, setOpen }: PopupProps) {
           ✕
         </button>
 
-        {/* العنوان */}
         <div className="flex items-center justify-between pb-4">
           <span className="text-[18px] font-semibold text-[#373737]">
             إضافة موظف جديد
@@ -173,115 +220,161 @@ export default function AddStaff({ open, setOpen }: PopupProps) {
 
           {/* الاسم + الهوية */}
           <div className="flex gap-5">
-            <input
-              type="text"
-              placeholder="اسم الموظف"
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-              className="w-full bg-[#f5f5f5] rounded-[10px] border border-[#f1f1f1] p-[14px] outline-none placeholder:text-[#7b7b7b]"
-            />
 
-            <input
-              type="text"
-              placeholder="رقم الهوية"
-              value={idNumber}
-              onChange={(e) => setIdNumber(e.target.value)}
-              className="w-full bg-[#f5f5f5] rounded-[10px] border border-[#f1f1f1] p-[14px] outline-none placeholder:text-[#7b7b7b]"
-            />
+            <div className="w-full">
+              <input
+                type="text"
+                placeholder="اسم الموظف"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                className={`w-full bg-[#f5f5f5] rounded-[10px] border p-[14px] outline-none 
+                ${errors.fullName ? "border-red-500" : "border-[#f1f1f1]"}`}
+              />
+              {errors.fullName && (
+                <p className="text-red-500 text-sm mt-1 text-right">{errors.fullName}</p>
+              )}
+            </div>
+
+            <div className="w-full">
+              <input
+                type="text"
+                placeholder="رقم الهوية"
+                value={idNumber}
+                onChange={(e) => setIdNumber(e.target.value)}
+                className={`w-full bg-[#f5f5f5] rounded-[10px] border p-[14px] outline-none
+                ${errors.idNumber ? "border-red-500" : "border-[#f1f1f1]"}`}
+              />
+              {errors.idNumber && (
+                <p className="text-red-500 text-sm mt-1 text-right">{errors.idNumber}</p>
+              )}
+            </div>
+
           </div>
 
           {/* البريد + الهاتف */}
           <div className="flex gap-5">
-            <input
-              type="text"
-              placeholder="البريد الإلكتروني"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full bg-[#f5f5f5] rounded-[10px] border border-[#f1f1f1] p-[14px] outline-none"
-            />
 
-            <input
-              type="text"
-              placeholder="رقم الهاتف"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              className="w-full bg-[#f5f5f5] rounded-[10px] border border-[#f1f1f1] p-[14px] outline-none"
-            />
+            <div className="w-full">
+              <input
+                type="text"
+                placeholder="البريد الإلكتروني"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className={`w-full bg-[#f5f5f5] rounded-[10px] border p-[14px] outline-none
+                ${errors.email ? "border-red-500" : "border-[#f1f1f1]"}`}
+              />
+              {errors.email && (
+                <p className="text-red-500 text-sm mt-1 text-right">{errors.email}</p>
+              )}
+            </div>
+
+            <div className="w-full">
+              <input
+                type="text"
+                placeholder="رقم الهاتف"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                className={`w-full bg-[#f5f5f5] rounded-[10px] border p-[14px] outline-none
+                ${errors.phone ? "border-red-500" : "border-[#f1f1f1]"}`}
+              />
+              {errors.phone && (
+                <p className="text-red-500 text-sm mt-1 text-right">{errors.phone}</p>
+              )}
+            </div>
+
           </div>
 
           {/* الوظيفة */}
-          <div className="bg-[#f5f5f5] rounded-[10px] border border-[#f1f1f1] p-[10px]">
-            <select
-              value={role}
-              onChange={(e) => setRole(e.target.value)}
-              className="bg-transparent outline-none text-[#7b7b7b] w-full"
-            >
-              <option value="">اختر الوظيفة</option>
+          <div className="w-full">
+            <div className={`bg-[#f5f5f5] rounded-[10px] border p-[10px]
+              ${errors.role ? "border-red-500" : "border-[#f1f1f1]"}`}>
+              <select
+                value={role}
+                onChange={(e) => setRole(e.target.value)}
+                className="bg-transparent outline-none text-[#7b7b7b] w-full"
+              >
+                <option value="">اختر الوظيفة</option>
 
-              {userRole === "admin" && (
-                <>
-                  <option value="admin">مسؤول</option>
-                  <option value="director">مدير</option>
-                  <option value="assistant_director">مدير مساعد</option>
-                  <option value="teacher">معلم</option>
-                  <option value="assistant_teacher">معلم مساعد</option>
-                </>
-              )}
+                {userRole === "admin" && (
+                  <>
+                    <option value="admin">مسؤول</option>
+                    <option value="director">مدير</option>
+                    <option value="assistant_director">مدير مساعد</option>
+                    <option value="teacher">معلم</option>
+                    <option value="assistant_teacher">معلم مساعد</option>
+                  </>
+                )}
 
-              {userRole === "director" && (
-                <>
-                  <option value="assistant_director">مدير مساعد</option>
-                  <option value="teacher">معلم</option>
-                  <option value="assistant_teacher">معلم مساعد</option>
-                </>
-              )}
+                {userRole === "director" && (
+                  <>
+                    <option value="assistant_director">مدير مساعد</option>
+                    <option value="teacher">معلم</option>
+                    <option value="assistant_teacher">معلم مساعد</option>
+                  </>
+                )}
 
-              {userRole === "assistant_director" && (
-                <>
-                  <option value="teacher">معلم</option>
-                  <option value="assistant_teacher">معلم مساعد</option>
-                </>
-              )}
-            </select>
+                {userRole === "assistant_director" && (
+                  <>
+                    <option value="teacher">معلم</option>
+                    <option value="assistant_teacher">معلم مساعد</option>
+                  </>
+                )}
+              </select>
+            </div>
+
+            {errors.role && (
+              <p className="text-red-500 text-sm mt-1 text-right">{errors.role}</p>
+            )}
           </div>
 
-          {/* الفترة + الفرع — تظهر فقط لو الإضافة ليست Admin */}
+          {/* الفترة + الفرع */}
           {userRole === "admin" && role !== "admin" && (
             <div className="flex gap-5">
 
               {/* الفترة */}
-              <div className="w-full bg-[#f5f5f5] p-[10px] rounded-[10px] border border-[#f1f1f1]">
-                <select
-                  value={shift}
-                  onChange={(e) => setShift(e.target.value)}
-                  className="w-full bg-transparent outline-none"
-                >
-                  <option value="">اختر الفترة</option>
-                  <option value="صباح">صباح</option>
-                  <option value="مساء">مساء</option>
-                </select>
+              <div className="w-full">
+                <div className={`bg-[#f5f5f5] rounded-[10px] border p-[10px]
+                  ${errors.shift ? "border-red-500" : "border-[#f1f1f1]"}`}>
+                  <select
+                    value={shift}
+                    onChange={(e) => setShift(e.target.value)}
+                    className="w-full bg-transparent outline-none"
+                  >
+                    <option value="">اختر الفترة</option>
+                    <option value="صباح">صباح</option>
+                    <option value="مساء">مساء</option>
+                  </select>
+                </div>
+
+                {errors.shift && (
+                  <p className="text-red-500 text-sm mt-1 text-right">{errors.shift}</p>
+                )}
               </div>
 
               {/* الفرع */}
-              <div className="w-full bg-[#f5f5f5] p-[10px] rounded-[10px] border border-[#f1f1f1]">
-                <select
-                  value={branch}
-                  onChange={(e) => setBranch(e.target.value)}
-                  className="w-full bg-transparent outline-none"
-                >
-                  <option value="">اختر الفرع</option>
-                  {branches.map((b) => (
-                    <option key={b._id} value={b._id}>
-                      {b.branchName}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              <div className="w-full">
+                <div className={`bg-[#f5f5f5] rounded-[10px] border p-[10px]
+                  ${errors.branch ? "border-red-500" : "border-[#f1f1f1]"}`}>
+                  <select
+                    value={branch}
+                    onChange={(e) => setBranch(e.target.value)}
+                    className="w-full bg-transparent outline-none"
+                  >
+                    <option value="">اختر الفرع</option>
+                    {branches.map((b) => (
+                      <option key={b._id} value={b._id}>
+                        {b.branchName}
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
+                {errors.branch && (
+                  <p className="text-red-500 text-sm mt-1 text-right">{errors.branch}</p>
+                )}
+              </div>
             </div>
           )}
-
-          
 
           {/* زر إضافة */}
           <div className="flex justify-center mt-3">
