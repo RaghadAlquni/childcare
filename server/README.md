@@ -105,6 +105,11 @@ WHATSAPP_PHONE_ID=your_phone_id
 npm start
 ```
 
+# 📚 API Documentation (Swagger)
+The full API documentation is available through Swagger UI:
+
+**https://childcare-4muz.onrender.com/api-docs/**
+
 # Endpoints (Summary)
 
 * **Auth Route**
