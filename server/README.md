@@ -231,19 +231,20 @@ The full API documentation is available through Swagger UI:
 * childcare-dashboard: [Childcare-Dashboard](https://childcare-7crg.vercel.app/)
 * childcare-website:[Childcare-website](https://childcare-x251.vercel.app/)
 
+<div align="center">
 
 # 🫱🏼‍🫲🏻 Contributing 
   Pull requests are welcome!
   
   If you’d like to suggest improvements or report issues, feel free to open an Issue.
 
-**🧑‍💻 Developer**
+**Developer 🧑‍💻**
 
 Raghad Alquni
 
 Full-Stack Developer — Next.js, React, Node.js, MongoDB.
 
-**⭐ Support the Project**
+**Support the Project ⭐**
 
 If you like this project, please give it a ⭐ on GitHub, it helps a lot!
-
+</div>
