@@ -225,3 +225,20 @@ npm start
 **Deployment:** 
 * childcare-dashboard: [Childcare-Dashboard](https://childcare-7crg.vercel.app/)
 * childcare-website:[Childcare-website](https://childcare-x251.vercel.app/)
+
+
+# 🫱🏼‍🫲🏻 Contributing 
+  Pull requests are welcome!
+  
+  If you’d like to suggest improvements or report issues, feel free to open an Issue.
+
+**🧑‍💻 Developer**
+
+Raghad Alquni
+
+Full-Stack Developer — Next.js, React, Node.js, MongoDB.
+
+**⭐ Support the Project**
+
+If you like this project, please give it a ⭐ on GitHub, it helps a lot!
+
