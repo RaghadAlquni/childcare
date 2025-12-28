@@ -233,7 +233,7 @@ The full API documentation is available through Swagger UI:
 
 <div align="center">
 
-# 🫱🏼‍🫲🏻 Contributing 
+# Contributing 🫱🏼‍🫲🏻
   Pull requests are welcome!
   
   If you’d like to suggest improvements or report issues, feel free to open an Issue.
