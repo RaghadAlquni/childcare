@@ -25,6 +25,7 @@ app.use(cors({
     const allowedOrigins = [
       "http://localhost:3000",
       "https://childcare-4muz.onrender.com",
+      "https://childcare-q4cc.vercel.app"
     ];
 
     // يسمح للـ Postman و الـ Swagger و Tools الأخرى

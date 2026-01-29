@@ -227,7 +227,7 @@ classroomRouter.put("/classroom/moveChild", authenticate, authorize(["director",
  */
 classroomRouter.get("/TeacherClassrooms", authenticate, getTeacherClassrooms);
 
-// grt one classroom
+// get one classroom
 /**
  * @swagger
  * /classrooms/:id:

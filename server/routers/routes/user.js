@@ -1,8 +1,7 @@
 const express = require("express")
 const userRouter = express.Router()
 
-const { addUser, getUser,
-  getTeachers,
+const { addUser, getUser, getTeachers,
   getTeacher,
   getAssistantTeachers,
   getAssistantTeacher,
