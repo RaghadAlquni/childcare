@@ -1,36 +1,39 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import Link from "next/link";
 import axios from "axios";
 
 const Branch = () => {
   const [branches, setBranches] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // -------------------------------
-  // 🔥 Fetch branches from backend
-  // -------------------------------
   const fetchBranches = async () => {
     try {
-      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/activeBranchs`);
-      
-      const branchData = res.data.data;
+      const res = await axios.get(
+  `http://localhost:5000/activeBranchs`, { withCredentials: true }
+);
 
-      // 🔥 التعديل الوحيد هنا — تجاهل غير النشط
-      const activeBranches = branchData.filter((b) => b.status === "نشط");
+      // حماية من undefined
+      const branchData = res?.data?.data || [];
+
+      // فلترة النشط فقط
+      const activeBranches = branchData.filter(
+        (b) => b?.status === "نشط"
+      );
 
       const formatted = activeBranches.map((b) => ({
-        branchName: b.branchName,
-        city: b.city,
-        district: b.district,
+        branchName: b?.branchName || "",
+        city: b?.city || "",
+        district: b?.district || "",
         branchImg:
-          b.branchImg ||
+          b?.branchImg ||
           "https://codia-f2c.s3.us-west-1.amazonaws.com/image/2025-12-05/aK9FMXdUq7.png",
       }));
 
       setBranches(formatted);
     } catch (error) {
-      console.error("Error fetching branches:", error);
+      console.log("FULL ERROR:", error);
+  console.log("RESPONSE:", error?.response);
+  console.log("DATA:", error?.response?.data);
     } finally {
       setLoading(false);
     }
@@ -59,6 +62,8 @@ const Branch = () => {
 
           {loading ? (
             <p className="text-xl text-gray-600">جارِ التحميل...</p>
+          ) : branches.length === 0 ? (
+            <p className="text-xl text-gray-600">لا توجد فروع حالياً</p>
           ) : (
             branches.slice(0, 3).map((branch, index) => (
               <div
@@ -71,19 +76,7 @@ const Branch = () => {
                 transition-all duration-500 hover:-translate-y-1 mx-auto
               "
               >
-
-                {/* 🔗 رابط الصورة */}
-                <a
-                  href={branch.coverImg}
-                  target="_blank"
-                  className="
-                  absolute top-3 left-3 z-20 opacity-0 group-hover:opacity-100 
-                  transition-all duration-500 bg-white/70 backdrop-blur-sm
-                  p-2 rounded-full
-                "
-                ></a>
-
-                {/* 🌟 الصورة */}
+                {/* الصورة */}
                 <div
                   className="w-full h-[240px] bg-cover bg-center"
                   style={{ backgroundImage: `url(${branch.branchImg})` }}
@@ -111,12 +104,14 @@ const Branch = () => {
 
         {/* زر المزيد */}
         <div className="mt-10 flex justify-center">
-          <button className="
+          <button
+            className="
             bg-[#f9b236] text-white text-[20px] 
             font-medium rounded-full 
             px-10 py-3 shadow-md
             hover:bg-[#e7a22e] transition
-          ">
+          "
+          >
             المزيد من الضيافات
           </button>
         </div>
