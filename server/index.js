@@ -13,7 +13,6 @@ require("./scripts/subscriptionMonitor.js");
 
 const app = express();
 // احنا نحتاج نسوي ميدل وير يحول لنا الجيسون الى كائن جافاسكربت
-app.use(express.json())
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 const token = process.env.WHATSAPP_TOKEN;
@@ -24,23 +23,26 @@ app.use(cors({
   origin: (origin, callback) => {
     const allowedOrigins = [
       "http://localhost:3000",
+      "http://localhost:3001",
       "https://childcare-4muz.onrender.com",
-      "https://childcare-q4cc.vercel.app"
+      "https://childcare-yyib.vercel.app",
+      "https://childcare-7crg.vercel.app",
     ];
 
-    // يسمح للـ Postman و الـ Swagger و Tools الأخرى
+    // السماح لـ Postman / Server to server
     if (!origin) return callback(null, true);
 
     if (allowedOrigins.includes(origin)) {
-      callback(null, true);
+      return callback(null, true);
     } else {
-      callback(new Error("Not allowed by CORS"));
+      return callback(new Error("Not allowed by CORS"));
     }
   },
   credentials: true,
 }));
 
 
+app.use(express.json())
 app.post("/send-whatsapp", async (req, res) => {
   try {
     const { recipient, message } = req.body;
