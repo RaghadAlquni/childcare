@@ -91,7 +91,7 @@ Feedback and suggestions are always welcome and considered as part of the improv
 
 **🌍 Deployment** 
 * [Public Website](https://childcare-krey.vercel.app/)
-* [Dashboard](https://childcare-7crg.vercel.app/)
+* [Dashboard](https://childcare-rf2c.vercel.app/))
 
 **📋 Project Trello Board:** 
 * [Trello](https://trello.com/b/unqYEG1G/wahat-al-marefa)
