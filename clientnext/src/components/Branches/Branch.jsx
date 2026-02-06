@@ -9,7 +9,7 @@ const Branch = () => {
   const fetchBranches = async () => {
     try {
       const res = await axios.get(
-  `http://localhost:5000/activeBranchs`, { withCredentials: true }
+  `${process.env.NEXT_PUBLIC_API_URL}/activeBranchs`, { withCredentials: true }
 );
 
       // حماية من undefined
