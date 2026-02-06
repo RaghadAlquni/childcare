@@ -27,6 +27,8 @@ app.use(cors({
       "https://childcare-4muz.onrender.com",
       "https://childcare-yyib.vercel.app",
       "https://childcare-7crg.vercel.app",
+
+      "https://childcare-rf2c.vercel.app"
     ];
 
     // السماح لـ Postman / Server to server
